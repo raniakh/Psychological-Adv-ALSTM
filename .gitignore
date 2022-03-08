@@ -1,0 +1,5 @@
+# ignore txt prints for debugging
+checkInputsAtDifferentStages*
+checkInputsAtDifferentStages_debugging.txt
+#ignore pycache
+__pycache__/

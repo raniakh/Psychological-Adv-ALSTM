@@ -23,10 +23,9 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.av_W = nn.Linear(in_features=num_units, out_features=num_units, bias=True)
         # self.av_u = nn.Linear(in_features=num_units, out_features=1, bias=False)
-        self.av_u = nn.Parameter(data=torch.zeros(4), requires_grad=True)
-        nn.init.uniform_(self.av_u)
+        self.av_u = nn.Parameter(data=torch.empty(4), requires_grad=True)   # before data=torch.zeros(4)
         self.att_weights = nn.Parameter(data=torch.FloatTensor(), requires_grad=True)
-
+        nn.init.uniform_(self.av_u)
         for weight in self.att_weights:
             nn.init.xavier_uniform(tensor=weight)
 
@@ -124,7 +123,8 @@ class LSTM(nn.Module):
 
         print('--LSTM::FORWARD-- Input as is:\n', file=f)
         print(pv_var.numpy(), file=f)
-        feature_mapping = self.in_lat(pv_var)
+        feature_mapping_tmp = self.in_lat(pv_var)
+        feature_mapping = torch.tanh(feature_mapping_tmp)  # Added 08.03.22
         print('--LSTM::FORWARD-- Input after in_lat:\n', file=f)
         print(feature_mapping, file=f)
         outputs, final_states = self.outputs_lstm(feature_mapping)
@@ -174,7 +174,7 @@ class Adversarial(nn.Module):
         if self.att:
             self.fc_W = nn.Linear(in_features=unit * 2, out_features=1, bias=True)
         else:
-            self.fc_W = nn.Linear(in_features=unit, out_features=1, bias=False) # previously named linear_layer
+            self.fc_W = nn.Linear(in_features=unit, out_features=1, bias=False)  # previously named linear_layer
 
     def forward(self, adv_input, gt_var):
         pred = self.get_pred(adv_input)
@@ -185,7 +185,7 @@ class Adversarial(nn.Module):
         adv_input.retain_grad()
         pred_loss.backward(retain_graph=True)
         grad = adv_input.grad.detach()
-        grad = F.normalize(grad, dim=1) #maybe 0?
+        grad = F.normalize(grad, dim=1)  # maybe 0?
         self.adv_pv_var = adv_input + self.eps * grad
         self.adv_pred = self.get_pred(self.adv_pv_var)
         if self.hinge:

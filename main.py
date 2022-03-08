@@ -109,7 +109,7 @@ def train(model, optimizer, tune_para=False):
 
 
 if __name__ == '__main__':
-    f = open('checkInputsAtDifferentStages_debugging.txt', 'w')
+    f = open('checkInputsAtDifferentStages_testing.txt', 'w')
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,

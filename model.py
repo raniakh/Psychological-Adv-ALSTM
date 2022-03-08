@@ -3,6 +3,7 @@ import copy
 import numpy as np
 import os
 import random
+import sys
 from sklearn.utils import shuffle
 from time import time
 import torch
@@ -117,20 +118,45 @@ class LSTM(nn.Module):
             end_ind = self.tra_pv.shape[0]
         return self.tra_pv[sta_ind:end_ind, :, :], self.tra_wd[sta_ind:end_ind, :, :], self.tra_gt[sta_ind:end_ind, :]
 
-    def forward(self, pv_var, wd_var, gt_var):
+    def forward(self, pv_var, wd_var, gt_var, f):
         pv_var, wd_var, gt_var = torch.from_numpy(pv_var).float(), torch.from_numpy(wd_var).float(), torch.from_numpy(
             gt_var).float()
+
+        print('--LSTM::FORWARD-- Input as is:\n', file=f)
+        print(pv_var.numpy(), file=f)
         feature_mapping = self.in_lat(pv_var)
+        print('--LSTM::FORWARD-- Input after in_lat:\n', file=f)
+        print(feature_mapping, file=f)
         outputs, final_states = self.outputs_lstm(feature_mapping)
+        print('--LSTM::FORWARD-- Input after lstm:\n', file=f)
+        print(outputs, file=f)
         if self.att:
+            print('--LSTM::FORWARD-- Entering Attention layer:\n', file=f)
             self.fea_con = self.attn_layer(outputs)
+            print('--LSTM::FORWARD-- Input after attn_layer:\n', file=f)
+            print(self.fea_con, file=f)
             if self.adv_train:
+                print('--LSTM::FORWARD-- Entering Adversarial layer:\n', file=f)
                 self.pred, self.adv_pred = self.adv_layer(self.fea_con, gt_var)
+                print('--LSTM::FORWARD-- Input\Pred after adv_layer:\n', file=f)
+                torch.set_printoptions(profile="full")
+                print(self.pred, file=f)
+                torch.set_printoptions(profile="default")
             else:
+                print('--LSTM::FORWARD-- No Adversarial layer:\n', file=f)
                 self.pred = self.linear_no_adv(self.fea_con)
+                print('--LSTM::FORWARD-- Input\Pred after linear_no_adv layer:\n', file=f)
+                torch.set_printoptions(profile="full")
+                print(self.pred, file=f)
+                torch.set_printoptions(profile="default")
         else:
             if self.adv_train:
+                print('--LSTM::FORWARD-- Entering Adversarial layer:\n', file=f)
                 self.pred, self.adv_pred = self.adv_layer(outputs[:, -1, :], gt_var)
+                print('--LSTM::FORWARD-- Input\Pred after adv_layer:\n', file=f)
+                torch.set_printoptions(profile="full")
+                print(self.pred, file=f)
+                torch.set_printoptions(profile="default")
         if self.hinge:
             self.loss = F.hinge_embedding_loss(input=self.pred, target=gt_var)
         else:

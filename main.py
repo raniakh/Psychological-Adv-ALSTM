@@ -35,6 +35,7 @@ def train(model, optimizer, tune_para=False):
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
+        print('-- EPOCH {}:'.format(i), file=f)
         t1 = time()
         tra_loss = 0.0
         tra_obj = 0.0
@@ -42,8 +43,10 @@ def train(model, optimizer, tune_para=False):
         tra_adv = 0.0
         for j in range(bat_count):
             optimizer.zero_grad()
+            print('-- BATCH {}:'.format(j), file=f)
+            print('-- TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
-            pred, adv_pred = model(pv_b, wd_b, gt_b)
+            pred, adv_pred = model(pv_b, wd_b, gt_b, f)
             # pred, adv_pred = torch.sign(pred), torch.sign(adv_pred) # TODO do i need to take sign?
             tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
             for var in tra_vars:
@@ -63,8 +66,8 @@ def train(model, optimizer, tune_para=False):
             tra_acc = 0.0
             for j in range(bat_count):
                 pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
-                pred, adv_pred = model(pv_b, wd_b, gt_b)
-                cur_tra_perf = evaluate(pred, gt_b, model.hinge)
+                pred, adv_pred = model(pv_b, wd_b, gt_b, f)
+                cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
                 tra_loss += model.loss
                 tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
                 for var in tra_vars:
@@ -78,11 +81,13 @@ def train(model, optimizer, tune_para=False):
                   (l2 / bat_count).item(), (tra_acc / bat_count).item())
         # test on validation
         print('---->>>>> Validation')
-        val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt)
+        print('-- VALIDATION', file=f)
+        val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt, f)
         cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
-        test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt)
+        print('-- TESTING', file=f)
+        test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
         cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
@@ -104,6 +109,7 @@ def train(model, optimizer, tune_para=False):
 
 
 if __name__ == '__main__':
+    f = open('checkInputsAtDifferentStages_debugging.txt', 'w')
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
@@ -178,3 +184,5 @@ if __name__ == '__main__':
     optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr'])
     if args.action == 'train':
         train(model=lstm, optimizer=optimizer)
+
+    f.close()

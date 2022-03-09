@@ -24,15 +24,15 @@ class Attention(nn.Module):
         self.av_W = nn.Linear(in_features=num_units, out_features=num_units, bias=True)
         # self.av_u = nn.Linear(in_features=num_units, out_features=1, bias=False)
         self.av_u = nn.Parameter(data=torch.empty(4), requires_grad=True)   # before data=torch.zeros(4)
-        self.att_weights = nn.Parameter(data=torch.FloatTensor(), requires_grad=True)
+        # self.att_weights = nn.Parameter(data=torch.FloatTensor(), requires_grad=True)
         nn.init.uniform_(self.av_u)
-        for weight in self.att_weights:
-            nn.init.xavier_uniform(tensor=weight)
+        # for weight in self.att_weights:
+        #     nn.init.xavier_uniform(tensor=weight)
+        self.av_W.apply(initialize_weights)
 
     def forward(self, hidden_states):
         self.a_linear = self.av_W(hidden_states)
         self.a_laten = torch.tanh(self.a_linear)
-        # self.a_scores = self.av_u(self.a_laten)
         self.a_scores = torch.tensordot(self.a_laten, self.av_u, dims=1)
         self.a_alphas = F.softmax(self.a_scores, dim=-1)
         self.a_con = torch.sum(hidden_states * torch.unsqueeze(self.a_alphas, -1), dim=1)
@@ -100,10 +100,8 @@ class LSTM(nn.Module):
                                     hidden_size=self.paras['unit'])  # input_size=self.paras['seq']
         if self.att:
             self.attn_layer = Attention(num_units=self.paras['unit'])
-            self.attn_layer.apply(initialize_weights)
         self.linear_no_adv = nn.Linear(in_features=self.paras['unit'] * 2, out_features=1)
         self.adv_layer = Adversarial(eps=self.paras['eps'], hinge=self.hinge, att=self.att, unit=self.paras['unit'])
-        self.adv_layer.apply(initialize_weights)
         self.pred = None
         self.adv_pred = None
 
@@ -175,6 +173,7 @@ class Adversarial(nn.Module):
             self.fc_W = nn.Linear(in_features=unit * 2, out_features=1, bias=True)
         else:
             self.fc_W = nn.Linear(in_features=unit, out_features=1, bias=False)  # previously named linear_layer
+        self.fc_W.apply(initialize_weights)
 
     def forward(self, adv_input, gt_var):
         pred = self.get_pred(adv_input)

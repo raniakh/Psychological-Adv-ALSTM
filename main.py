@@ -47,6 +47,7 @@ def train(model, optimizer, tune_para=False):
             print('-- TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
+            print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))    # DEBUG purposes
             # pred, adv_pred = torch.sign(pred), torch.sign(adv_pred) # TODO do i need to take sign?
             tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
             for var in tra_vars:
@@ -57,6 +58,8 @@ def train(model, optimizer, tune_para=False):
             tra_loss += model.loss
             tra_obj += loss.data
             tra_adv += model.adv_layer.adv_loss
+        epoch_loss = (tra_obj / bat_count).item()
+        # scheduler.step(epoch_loss)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count).item(), (tra_adv / bat_count).item())
         if not tune_para:
@@ -74,11 +77,9 @@ def train(model, optimizer, tune_para=False):
                     l2 += torch.sum(var ** 2) / 2
                 loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2
                 tra_obj += loss.data
-                loss.backward(retain_graph=True)
-                optimizer.step()
                 tra_acc += cur_tra_perf['acc']
             print('Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
-                  (l2 / bat_count).item(), (tra_acc / bat_count).item())
+                  (l2 / bat_count).item(), '\tTrain per:', (tra_acc / bat_count).item())
         # test on validation
         print('---->>>>> Validation')
         print('-- VALIDATION', file=f)
@@ -182,6 +183,7 @@ if __name__ == '__main__':
     lstm.to(device)
     lstm.apply(initialize_weights)
     optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr'])
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     if args.action == 'train':
         train(model=lstm, optimizer=optimizer)
 

@@ -97,13 +97,16 @@ class LSTM(nn.Module):
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']
         # self.lstm_cell = nn.LSTMCell(input_size=self.fea_dim,hidden_size=self.paras['unit'])
         self.outputs_lstm = nn.LSTM(input_size=self.fea_dim,
-                                    hidden_size=self.paras['unit'])  # input_size=self.paras['seq']
+                                    hidden_size=self.paras['unit'], batch_first=True)  # input_size=self.paras['seq']
         if self.att:
             self.attn_layer = Attention(num_units=self.paras['unit'])
         self.linear_no_adv = nn.Linear(in_features=self.paras['unit'] * 2, out_features=1)
         self.adv_layer = Adversarial(eps=self.paras['eps'], hinge=self.hinge, att=self.att, unit=self.paras['unit'])
         self.pred = None
         self.adv_pred = None
+        self.in_lat.apply(initialize_weights)
+        self.linear_no_adv.apply(initialize_weights)
+
 
     def get_batch(self, sta_ind=None):
         if sta_ind is None:

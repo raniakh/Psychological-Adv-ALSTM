@@ -23,7 +23,7 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.av_W = nn.Linear(in_features=num_units, out_features=num_units, bias=True)
         # self.av_u = nn.Linear(in_features=num_units, out_features=1, bias=False)
-        self.av_u = nn.Parameter(data=torch.empty(4), requires_grad=True)   # before data=torch.zeros(4)
+        self.av_u = nn.Parameter(data=torch.empty(num_units), requires_grad=True)   # before data=torch.zeros(4)
         # self.att_weights = nn.Parameter(data=torch.FloatTensor(), requires_grad=True)
         nn.init.uniform_(self.av_u)
         # for weight in self.att_weights:

@@ -1,6 +1,7 @@
 import argparse
 import copy
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 import pickle
 import random
@@ -30,8 +31,10 @@ def train(model, optimizer, tune_para=False):
     best_test_perf = {
         'acc': 0, 'mcc': -2
     }
-# TODO add loss + obj function in train
+    # TODO add loss + obj function in train
     bat_count = model.tra_pv.shape[0] // model.batch_size
+    training_loss = []
+    validation_loss = []
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
@@ -47,19 +50,20 @@ def train(model, optimizer, tune_para=False):
             print('-- TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
-            print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))    # DEBUG purposes
+            print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
             # pred, adv_pred = torch.sign(pred), torch.sign(adv_pred) # TODO do i need to take sign?
             tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
             for var in tra_vars:
-                l2 += torch.sum(var**2)/2
-            loss = model.loss + parameters['bet']*model.adv_layer.adv_loss + parameters['alp']*l2
+                l2 += torch.sum(var ** 2) / 2
+            loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2
             loss.backward(retain_graph=True)
             optimizer.step()
             tra_loss += model.loss
             tra_obj += loss.data
             tra_adv += model.adv_layer.adv_loss
         epoch_loss = (tra_obj / bat_count).item()
-        # scheduler.step(epoch_loss)
+        scheduler.step(epoch_loss)
+        training_loss.append(epoch_loss)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count).item(), (tra_adv / bat_count).item())
         if not tune_para:
@@ -85,6 +89,7 @@ def train(model, optimizer, tune_para=False):
         print('-- VALIDATION', file=f)
         val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt, f)
         cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
+        validation_loss.append(model.loss.item())
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
         print('-- TESTING', file=f)
@@ -107,6 +112,15 @@ def train(model, optimizer, tune_para=False):
         print('epoch:', i, ('time: %.4f ' % (t4 - t1)))
     print('\nBest Valid performance:', best_valid_perf)
     print('\tBest Test performance:', best_test_perf)
+    visual_loss(training_loss, validation_loss)
+
+
+def visual_loss(training_loss, validation_loss):
+    plt.plot(training_loss, label='training loss')
+    plt.plot(validation_loss, label='validation loss')
+    plt.legend()
+    plt.title('Loss x Epochs')
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -183,7 +197,7 @@ if __name__ == '__main__':
     lstm.to(device)
     lstm.apply(initialize_weights)
     optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr'])
-    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     if args.action == 'train':
         train(model=lstm, optimizer=optimizer)
 

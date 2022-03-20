@@ -38,7 +38,7 @@ def train(model, optimizer, tune_para=False):
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
-        print('-- EPOCH {}:'.format(i), file=f)
+        print('--> EPOCH {}:'.format(i), file=f)
         t1 = time()
         tra_loss = 0.0
         tra_obj = 0.0
@@ -46,13 +46,17 @@ def train(model, optimizer, tune_para=False):
         tra_adv = 0.0
         for j in range(bat_count):
             optimizer.zero_grad()
-            print('-- BATCH {}:'.format(j), file=f)
-            print('-- TRAINING', file=f)
+            print('--> BATCH {}:'.format(j), file=f)
+            print('--> TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
             print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
             # pred, adv_pred = torch.sign(pred), torch.sign(adv_pred) # TODO do i need to take sign?
             tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
+            torch.set_printoptions(profile="full")
+            print("--> PREDICTION TRAINING - adv_pred - epoch {} batch {}".format(i, j), file=f)
+            print(adv_pred, file=f)
+            torch.set_printoptions(profile="default")
             for var in tra_vars:
                 l2 += torch.sum(var ** 2) / 2
             loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2
@@ -62,7 +66,7 @@ def train(model, optimizer, tune_para=False):
             tra_obj += loss.data
             tra_adv += model.adv_layer.adv_loss
         epoch_loss = (tra_obj / bat_count).item()
-        scheduler.step(epoch_loss)
+        # scheduler.step(epoch_loss)
         training_loss.append(epoch_loss)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count).item(), (tra_adv / bat_count).item())
@@ -86,14 +90,23 @@ def train(model, optimizer, tune_para=False):
                   (l2 / bat_count).item(), '\tTrain per:', (tra_acc / bat_count).item())
         # test on validation
         print('---->>>>> Validation')
-        print('-- VALIDATION', file=f)
+        print('--> VALIDATION', file=f)
         val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt, f)
+        torch.set_printoptions(profile="full")
+        print("--> PREDICTION VALIDATION - adv_pred - epoch {} batch {}".format(i, j), file=f)
+        torch.set_printoptions(profile="full")
+        print(val_adv_pred, file=f)
+        torch.set_printoptions(profile="default")
         cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
         validation_loss.append(model.loss.item())
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
-        print('-- TESTING', file=f)
+        print('--> TESTING', file=f)
         test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
+        print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
+        torch.set_printoptions(profile="full")
+        print(test_adv_pred, file=f)
+        torch.set_printoptions(profile="default")
         cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
@@ -124,7 +137,7 @@ def visual_loss(training_loss, validation_loss):
 
 
 if __name__ == '__main__':
-    f = open('checkInputsAtDifferentStages_testing.txt', 'w')
+    f = open('checkInputsAtDifferentStages_ACL18_lre-3_____.txt', 'w')
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
@@ -197,7 +210,7 @@ if __name__ == '__main__':
     lstm.to(device)
     lstm.apply(initialize_weights)
     optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr'])
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     if args.action == 'train':
         train(model=lstm, optimizer=optimizer)
 

@@ -139,25 +139,13 @@ class LSTM(nn.Module):
             if self.adv_train:
                 print('--LSTM::FORWARD-- Entering Adversarial layer:\n', file=f)
                 self.pred, self.adv_pred = self.adv_layer(self.fea_con, gt_var)
-                print('--LSTM::FORWARD-- Input\Pred after adv_layer:\n', file=f)
-                torch.set_printoptions(profile="full")
-                print(self.pred, file=f)
-                torch.set_printoptions(profile="default")
             else:
                 print('--LSTM::FORWARD-- No Adversarial layer:\n', file=f)
                 self.pred = self.linear_no_adv(self.fea_con)
-                print('--LSTM::FORWARD-- Input\Pred after linear_no_adv layer:\n', file=f)
-                torch.set_printoptions(profile="full")
-                print(self.pred, file=f)
-                torch.set_printoptions(profile="default")
         else:
             if self.adv_train:
                 print('--LSTM::FORWARD-- Entering Adversarial layer:\n', file=f)
                 self.pred, self.adv_pred = self.adv_layer(outputs[:, -1, :], gt_var)
-                print('--LSTM::FORWARD-- Input\Pred after adv_layer:\n', file=f)
-                torch.set_printoptions(profile="full")
-                print(self.pred, file=f)
-                torch.set_printoptions(profile="default")
         if self.hinge:
             self.loss = F.hinge_embedding_loss(input=self.pred, target=gt_var)
         else:

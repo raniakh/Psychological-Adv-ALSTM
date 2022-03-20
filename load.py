@@ -95,7 +95,7 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
                     data_EOD[tic_ind][date_ind - seq: date_ind, :].min() > -123320: #if data_EOD[stock][day][next to last column]>1e-8 and data_EOD[stock][10 days history]=matrix of 10x15 .min()>-123320
                 tra_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, : -2]  # N (example 10) day history of stock without last 2 columns
                 tra_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]  # the corresponding week days for the N day history
-                tra_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2  # Rania: what is this? - (data_EOD[stock][date][next to last column]+1)/2 -> what is this value?
+                tra_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2  # Rania: (data_EOD[stock][date][next to last column]+1)/2 -> what is this value? classification 1 or 0
                 ins_ind += 1
 
     # validation

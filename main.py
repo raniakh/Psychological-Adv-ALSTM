@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 import random
+import sys
 from sklearn.utils import shuffle
 from time import time
+import datetime
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -19,6 +21,7 @@ from model import LSTM, initialize_weights
 
 def train(model, optimizer, tune_para=False):
     model.train()
+    np.set_printoptions(threshold=sys.maxsize)
     if model.reload:
         model.load_state_dict(torch.load(model.model_path))
 
@@ -35,6 +38,9 @@ def train(model, optimizer, tune_para=False):
     bat_count = model.tra_pv.shape[0] // model.batch_size
     training_loss = []
     validation_loss = []
+    training_accuracy = []
+    validation_accuracy = []
+    testing_accuracy = []
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
@@ -44,18 +50,25 @@ def train(model, optimizer, tune_para=False):
         tra_obj = 0.0
         l2 = 0.0
         tra_adv = 0.0
+        ## trying something
+        tra_acc = 0.0
+        ##
         for j in range(bat_count):
             optimizer.zero_grad()
             print('--> BATCH {}:'.format(j), file=f)
             print('--> TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
+            ## trying something
+            cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
+            tra_acc += cur_tra_perf['acc']
+            ##
             print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
-            # pred, adv_pred = torch.sign(pred), torch.sign(adv_pred) # TODO do i need to take sign?
             tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
             torch.set_printoptions(profile="full")
-            print("--> PREDICTION TRAINING - adv_pred - epoch {} batch {}".format(i, j), file=f)
-            print(adv_pred, file=f)
+            print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
+            tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
+            print(tmp_arr, file=f)
             torch.set_printoptions(profile="default")
             for var in tra_vars:
                 l2 += torch.sum(var ** 2) / 2
@@ -66,8 +79,10 @@ def train(model, optimizer, tune_para=False):
             tra_obj += loss.data
             tra_adv += model.adv_layer.adv_loss
         epoch_loss = (tra_obj / bat_count).item()
+        epoch_accuracy = (tra_acc / bat_count).item()
         # scheduler.step(epoch_loss)
         training_loss.append(epoch_loss)
+        training_accuracy.append(epoch_accuracy)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count).item(), (tra_adv / bat_count).item())
         if not tune_para:
@@ -95,19 +110,23 @@ def train(model, optimizer, tune_para=False):
         torch.set_printoptions(profile="full")
         print("--> PREDICTION VALIDATION - adv_pred - epoch {} batch {}".format(i, j), file=f)
         torch.set_printoptions(profile="full")
-        print(val_adv_pred, file=f)
+        tmp_arr = np.concatenate((val_adv_pred.data.numpy(), model.val_gt), axis=1)
+        print(tmp_arr, file=f)
         torch.set_printoptions(profile="default")
         cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
         validation_loss.append(model.loss.item())
+        validation_accuracy.append(cur_valid_perf['acc'])
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
         print('--> TESTING', file=f)
         test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
         print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
         torch.set_printoptions(profile="full")
-        print(test_adv_pred, file=f)
+        tmp_arr = np.concatenate((test_adv_pred.data.numpy(), model.tes_gt), axis=1)
+        print(tmp_arr, file=f)
         torch.set_printoptions(profile="default")
         cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
+        testing_accuracy.append(cur_test_perf['acc'])
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
         if cur_valid_perf['acc'] > best_valid_perf['acc']:
@@ -126,18 +145,28 @@ def train(model, optimizer, tune_para=False):
     print('\nBest Valid performance:', best_valid_perf)
     print('\tBest Test performance:', best_test_perf)
     visual_loss(training_loss, validation_loss)
+    visual_accuracy(training_accuracy, validation_accuracy, testing_accuracy)
 
 
 def visual_loss(training_loss, validation_loss):
     plt.plot(training_loss, label='training loss')
     plt.plot(validation_loss, label='validation loss')
     plt.legend()
-    plt.title('Loss x Epochs')
+    plt.title('Loss x Epochs learning rate {}'.format(parameters['lr']))
+    plt.show()
+
+
+def visual_accuracy(training_acc, validation_acc, testing_acc):
+    plt.plot(training_acc, label='training acc')
+    plt.plot(validation_acc, label='validation acc')
+    plt.plot(testing_acc, label='testing acc')
+    plt.legend()
+    plt.title('Accuracy x Epochs learning rate {}'.format(parameters['lr']))
     plt.show()
 
 
 if __name__ == '__main__':
-    f = open('checkInputsAtDifferentStages_ACL18_lre-3_____.txt', 'w')
+    torch.autograd.set_detect_anomaly(True)
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
@@ -176,6 +205,9 @@ if __name__ == '__main__':
         'eps': float(args.epsilon_adv),
         'lr': float(args.learning_rate)
     }
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    dataname = args.path.split('/')[2]
+    f = open('checkInputsAtDifferentStages_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
 
     if 'stocknet' in args.path:
         tra_date = '2014-01-02'

@@ -19,11 +19,11 @@ def evaluate(prediction, ground_truth, hinge=False, reg=False):
             if abs(v - 0.5) < 1e-8 or np.isnan(v):
                 pred[ind][0] = 0
     else:
-        pred = np.round(prediction)
+        pred = torch.round(prediction)
     try:
         performance['acc'] = accuracy_score(ground_truth, pred.detach().numpy())
     except Exception:
-        np.savetxt('prediction', pred, delimiter=',')
+        np.savetxt('prediction', pred.data.numpy(), delimiter=',')
         exit(0)
     performance['mcc'] = matthews_corrcoef(ground_truth, pred.detach().numpy())
     return performance

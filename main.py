@@ -34,7 +34,7 @@ def train(model, optimizer, tune_para=False):
     best_test_perf = {
         'acc': 0, 'mcc': -2
     }
-    # TODO add loss + obj function in train
+
     bat_count = model.tra_pv.shape[0] // model.batch_size
     training_loss = []
     validation_loss = []
@@ -60,20 +60,26 @@ def train(model, optimizer, tune_para=False):
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
             ## trying something
-            cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
+            if model.adv_train:
+                cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
+                print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
+                tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
+                torch.set_printoptions(profile="full")
+                print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
+                tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
+                print(tmp_arr, file=f)
+                torch.set_printoptions(profile="default")
+                for var in tra_vars:
+                    l2 += torch.sum(var ** 2) / 2
+            else:
+                cur_tra_perf = evaluate(pred, gt_b, model.hinge)
+                print('*--* TRAINING evaluate: ', cur_tra_perf)
             tra_acc += cur_tra_perf['acc']
             ##
-            print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
-            tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
-            torch.set_printoptions(profile="full")
-            print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
-            tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
-            print(tmp_arr, file=f)
-            torch.set_printoptions(profile="default")
-            for var in tra_vars:
-                l2 += torch.sum(var ** 2) / 2
-            loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2
-            loss.backward(retain_graph=True)
+
+
+            loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2 # TODO: - the l2 loss is MUCH bigger than the other 2 losses, which makes it dominant. Other losses have 0 effect.
+            loss.backward(retain_graph=True)    # TODO: - Not sure you want the retain_graph = true.
             optimizer.step()
             tra_loss += model.loss
             tra_obj += loss.data
@@ -84,7 +90,7 @@ def train(model, optimizer, tune_para=False):
         training_loss.append(epoch_loss)
         training_accuracy.append(epoch_accuracy)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
-              (l2 / bat_count).item(), (tra_adv / bat_count).item())
+              (l2 / bat_count), (tra_adv / bat_count))
         if not tune_para:
             tra_loss = 0.0
             tra_obj = 0.0
@@ -93,39 +99,50 @@ def train(model, optimizer, tune_para=False):
             for j in range(bat_count):
                 pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
                 pred, adv_pred = model(pv_b, wd_b, gt_b, f)
-                cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
+                if model.adv_train:
+                    cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
+                    tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
+                    for var in tra_vars:
+                        l2 += torch.sum(var ** 2) / 2
+                else:
+                    cur_tra_perf = evaluate(pred, gt_b, model.hinge)
+
                 tra_loss += model.loss
-                tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
-                for var in tra_vars:
-                    l2 += torch.sum(var ** 2) / 2
+
                 loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2
                 tra_obj += loss.data
                 tra_acc += cur_tra_perf['acc']
             print('Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
-                  (l2 / bat_count).item(), '\tTrain per:', (tra_acc / bat_count).item())
+                  (l2 / bat_count), '\tTrain per:', (tra_acc / bat_count).item())
         # test on validation
         print('---->>>>> Validation')
-        print('--> VALIDATION', file=f)
+        # print('--> VALIDATION', file=f)
         val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt, f)
-        torch.set_printoptions(profile="full")
-        print("--> PREDICTION VALIDATION - adv_pred - epoch {} batch {}".format(i, j), file=f)
-        torch.set_printoptions(profile="full")
-        tmp_arr = np.concatenate((val_adv_pred.data.numpy(), model.val_gt), axis=1)
-        print(tmp_arr, file=f)
-        torch.set_printoptions(profile="default")
-        cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
+        # torch.set_printoptions(profile="full")
+        # print("--> PREDICTION VALIDATION - adv_pred - epoch {}".format(i), file=f)
+        # torch.set_printoptions(profile="full")
+        # tmp_arr = np.concatenate((val_adv_pred.data.numpy(), model.val_gt), axis=1)
+        # print(tmp_arr, file=f)
+        # torch.set_printoptions(profile="default")
+        if model.adv_train:
+            cur_valid_perf = evaluate(val_adv_pred, model.val_gt, model.hinge)
+        else:
+            cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
         validation_loss.append(model.loss.item())
         validation_accuracy.append(cur_valid_perf['acc'])
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
-        print('--> TESTING', file=f)
+        # print('--> TESTING', file=f)
         test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
         print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
-        torch.set_printoptions(profile="full")
-        tmp_arr = np.concatenate((test_adv_pred.data.numpy(), model.tes_gt), axis=1)
-        print(tmp_arr, file=f)
-        torch.set_printoptions(profile="default")
-        cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
+        # torch.set_printoptions(profile="full")
+        # tmp_arr = np.concatenate((test_adv_pred.data.numpy(), model.tes_gt), axis=1)
+        # print(tmp_arr, file=f)
+        # torch.set_printoptions(profile="default")
+        if model.adv_train:
+            cur_test_perf = evaluate(test_adv_pred, model.tes_gt, model.hinge)
+        else:
+            cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
         testing_accuracy.append(cur_test_perf['acc'])
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
@@ -179,7 +196,7 @@ if __name__ == '__main__':
                         default=1e-2)
     parser.add_argument('-s', '--step', help='steps to make prediction', type=int, default=1)
     parser.add_argument('-b', '--batch_size', help='batch size', type=int, default=1024)
-    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=150)
+    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=200) #150
     parser.add_argument('-r', '--learning_rate', help='learning rate', type=float, default=1e-2)
     parser.add_argument('-g', '--gpu', type=int, default=0, help='use gpu')
     parser.add_argument('-q', '--model_path', help='path to load model', type=str,
@@ -241,7 +258,7 @@ if __name__ == '__main__':
         device = 'cpu'
     lstm.to(device)
     lstm.apply(initialize_weights)
-    optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr'])
+    optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr']) # TODO: lower learning rate to 1e-4 or even less and then try again.
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     if args.action == 'train':
         train(model=lstm, optimizer=optimizer)

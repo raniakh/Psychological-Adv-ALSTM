@@ -235,6 +235,8 @@ if __name__ == '__main__':
     f = open('checkInputsAtDifferentStages_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
     if args.zeus == 1:
         args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
+        args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'
+        args.model_save_path = '/workspace/ALSTM/tmp/model'
 
     if 'stocknet' in args.path:
         tra_date = '2014-01-02'

@@ -69,8 +69,9 @@ def train(model, optimizer, tune_para=False):
                 tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
                 print(tmp_arr, file=f)
                 torch.set_printoptions(profile="default")
-                for var in tra_vars:
-                    l2 += torch.sum(var ** 2) / 2
+                with torch.no_grad():
+                    for var in tra_vars:
+                        l2 += torch.sum(var ** 2) / 2
             else:
                 cur_tra_perf = evaluate(pred, gt_b, model.hinge)
                 print('*--* TRAINING evaluate: ', cur_tra_perf)

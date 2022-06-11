@@ -1,0 +1,30 @@
+name: psychological-adv-alstm
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pytorch
+  - torchaudio
+  - torchvision
+  - cudatoolkit=11.3
+  - ipython
+  - numpy
+  - scipy
+  - scikit-learn
+  - scikit-image
+  - jupyterlab
+  - matplotlib
+  - jupyter
+  - pandas
+  - cython
+  - pytest
+  - tqdm
+  - opencv
+  - freetype=2.10.*
+  - plotly
+  - ipykernel
+  - python-kaleido
+  - numba

@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --job-name=rania-alstm
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=64gb
+#SBATCH --output=%x-%j.out
+#SBATCH --qos=normal
+
+srun --gpus=1 --ntasks=1 --container-image=$HOME/nvidia+pytorch+22.03-py3.sqsh --container-mounts $HOME/rania/ALSTM:/workspace/ALSTM /workspace/ALSTM/train_psychological-adv-alstm.bash
+

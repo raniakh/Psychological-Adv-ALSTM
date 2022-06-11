@@ -1,6 +1,7 @@
 from datetime import datetime
 import numpy as np
 import os
+import torch
 
 
 def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
@@ -133,6 +134,13 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
                 tes_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]
                 tes_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2
                 ins_ind += 1
+    # tra_pv = tra_pv[:100, :, :]
+    # tra_wd = tra_wd[:100, :, :]
+    # tra_gt = tra_gt[:100, :]
+    # tra_gt = np.ones_like(tra_gt)
+    # tra_gt[tra_gt == 0] = -1
+    # val_gt[val_gt == 0] = -1
+    # tes_gt[tes_gt == 0] = -1
     return tra_pv, tra_wd, tra_gt, val_pv, val_wd, val_gt, tes_pv, tes_wd, tes_gt
 
 

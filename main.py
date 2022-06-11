@@ -87,8 +87,9 @@ def train(model, optimizer, tune_para=False):
         epoch_loss = (tra_obj / bat_count).item()
         epoch_accuracy = (tra_acc / bat_count).item()
         # scheduler.step(epoch_loss)
-        training_loss.append(epoch_loss)
-        training_accuracy.append(epoch_accuracy)
+        if i > 100:
+            training_loss.append(epoch_loss)
+            training_accuracy.append(epoch_accuracy)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count), (tra_adv / bat_count))
         if not tune_para:
@@ -128,8 +129,9 @@ def train(model, optimizer, tune_para=False):
             cur_valid_perf = evaluate(val_adv_pred, model.val_gt, model.hinge)
         else:
             cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
-        validation_loss.append(model.loss.item())
-        validation_accuracy.append(cur_valid_perf['acc'])
+        if i > 100:
+            validation_loss.append(model.loss.item())
+            validation_accuracy.append(cur_valid_perf['acc'])
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
         # print('--> TESTING', file=f)
@@ -143,7 +145,8 @@ def train(model, optimizer, tune_para=False):
             cur_test_perf = evaluate(test_adv_pred, model.tes_gt, model.hinge)
         else:
             cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
-        testing_accuracy.append(cur_test_perf['acc'])
+        if i > 100:
+            testing_accuracy.append(cur_test_perf['acc'])
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
         if cur_valid_perf['acc'] > best_valid_perf['acc']:
@@ -170,6 +173,8 @@ def visual_loss(training_loss, validation_loss):
     plt.plot(validation_loss, label='validation loss')
     plt.legend()
     plt.title('Loss x Epochs learning rate {}'.format(parameters['lr']))
+    labels = np.arange(start=100, step=50, stop=350)
+    plt.xticks(labels)
     plt.show()
 
 
@@ -179,6 +184,8 @@ def visual_accuracy(training_acc, validation_acc, testing_acc):
     plt.plot(testing_acc, label='testing acc')
     plt.legend()
     plt.title('Accuracy x Epochs learning rate {}'.format(parameters['lr']))
+    labels = np.arange(start=100, step=50, stop=350)
+    plt.xlabel(labels)
     plt.show()
 
 
@@ -188,6 +195,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
                         default='./data/stocknet-dataset/price/ourpped')
+    parser.add_argument('-z', '--zeus', help='running on cluster', type=int, default=0)
     parser.add_argument('-l', '--seq', help='length of history', type=int, default=5)
     parser.add_argument('-u', '--unit', help='number pf hidden units in lstm', type=int, default=32)
     parser.add_argument('-l2', '--alpha_l2', type=float, help='alpha for l2 regularizer', default=1e-2)
@@ -196,7 +204,7 @@ if __name__ == '__main__':
                         default=1e-2)
     parser.add_argument('-s', '--step', help='steps to make prediction', type=int, default=1)
     parser.add_argument('-b', '--batch_size', help='batch size', type=int, default=1024)
-    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=200) #150
+    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=350) #150
     parser.add_argument('-r', '--learning_rate', help='learning rate', type=float, default=1e-2)
     parser.add_argument('-g', '--gpu', type=int, default=0, help='use gpu')
     parser.add_argument('-q', '--model_path', help='path to load model', type=str,
@@ -225,6 +233,8 @@ if __name__ == '__main__':
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     dataname = args.path.split('/')[2]
     f = open('checkInputsAtDifferentStages_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
+    if args.zeus == 1:
+        args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
 
     if 'stocknet' in args.path:
         tra_date = '2014-01-02'

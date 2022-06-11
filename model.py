@@ -158,10 +158,13 @@ class LSTM(nn.Module):
             # self.loss = hinge_loss(gt_var, self.pred)
             # self.loss = nn.MultiLabelMarginLoss()(self.pred, gt_var)
             # self.loss = F.hinge_embedding_loss(input=self.pred, target=gt_var)
-            self.loss = nn.MultiMarginLoss()(input=self.pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
+            # self.loss = nn.MultiMarginLoss()(input=self.pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
             # gt_var_new = (gt_var - 1).long()
             # pred_new = self.pred - 1
             # self.loss = nn.MultiLabelMarginLoss()(pred_new, gt_var_new)
+            lossfn = nn.MarginRankingLoss(margin=1)
+            zeros = torch.zeros_like(self.pred)
+            self.loss = lossfn(input1=self.pred, input2=zeros, target=gt_var)
         else:
             self.pred = torch.sigmoid(self.pred)
             self.loss = F.binary_cross_entropy(input=self.pred, target=gt_var)
@@ -189,10 +192,13 @@ class Adversarial(nn.Module):
             # pred_loss = hinge_loss(gt_var, pred)
             # pred_loss = nn.MultiLabelMarginLoss()(pred, gt_var)
             # pred_loss = F.hinge_embedding_loss(input=pred, target=gt_var)
-            pred_loss = nn.MultiMarginLoss()(input=pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
+            # pred_loss = nn.MultiMarginLoss()(input=pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
             # gt_var_new = (gt_var - 1).long()
             # pred_new = pred - 1
             # pred_loss = nn.MultiLabelMarginLoss()(pred_new, gt_var_new)
+            lossfn = nn.MarginRankingLoss(margin=1)
+            zeros = torch.zeros_like(pred)
+            pred_loss = lossfn(input1=pred, input2=zeros, target=gt_var)
         else:
             pred_loss = F.binary_cross_entropy(input=pred, target=gt_var)
         adv_input.retain_grad()
@@ -207,10 +213,13 @@ class Adversarial(nn.Module):
             # self.adv_loss = hinge_loss(gt_var, self.adv_pred)
             # self.adv_loss = nn.MultiLabelMarginLoss()(self.adv_pred, gt_var)
             # self.adv_loss = F.hinge_embedding_loss(input=self.adv_pred, target=gt_var)
-            self.adv_loss = nn.MultiMarginLoss()(input=self.adv_pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
+            # self.adv_loss = nn.MultiMarginLoss()(input=self.adv_pred, target=torch.reshape(gt_var.long(), (gt_var.size(0),)))
             # gt_var_new = (gt_var - 1).long()
             # advpred_new = self.adv_pred - 1
             # self.adv_loss = nn.MultiLabelMarginLoss()(advpred_new, gt_var_new)
+            lossfn = nn.MarginRankingLoss(margin=1)
+            zeros = torch.zeros_like(self.adv_pred)
+            self.adv_loss = lossfn(input1=self.adv_pred, input2=zeros, target=gt_var)
         else:
             self.adv_loss = F.binary_cross_entropy(input=self.adv_pred, target=gt_var)
         # adv_pred = e_adv <-> AE

@@ -21,7 +21,8 @@ def evaluate(prediction, ground_truth, hinge=False, reg=False):
     else:
         pred = torch.round(prediction)
     try:
-        performance['acc'] = accuracy_score(ground_truth, pred.detach().numpy())
+        # pred[pred == 0] = -1
+        performance['acc'] = accuracy_score(ground_truth, pred.data.numpy())
     except Exception:
         np.savetxt('prediction', pred.data.numpy(), delimiter=',')
         exit(0)

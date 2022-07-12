@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name=rania-alstm
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=64gb
+#SBATCH --output=%x-%j.out
+#SBATCH --qos=normal
+
+chmod +x train_ADVBCE_psychological-adv-alstm.bash
+
+srun --container-image=/home/rania.khoury/nvidia+pytorch+22.05-py3.sqsh --container-save=/home/rania.khoury/nvidia+pytorch+22.05-py3.sqsh --container-mounts /home/rania.khoury/rania/ALSTM:/workspace/ALSTM /workspace/ALSTM/train_psychological-adv-alstm.bash

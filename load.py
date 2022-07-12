@@ -138,6 +138,8 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
     # tra_wd = tra_wd[:100, :, :]
     # tra_gt = tra_gt[:100, :]
     # tra_gt = np.ones_like(tra_gt)
+
+    ## Enable for hinge loss, Disable for BCE
     # tra_gt[tra_gt == 0] = -1
     # val_gt[val_gt == 0] = -1
     # tes_gt[tes_gt == 0] = -1

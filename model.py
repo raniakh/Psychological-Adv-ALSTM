@@ -5,7 +5,6 @@ import os
 import random
 import sys
 from sklearn.utils import shuffle
-from time import time
 import torch
 import torch.nn as nn
 import torch.optim as optim

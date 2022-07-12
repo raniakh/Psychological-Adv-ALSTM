@@ -44,7 +44,7 @@ def train(model, optimizer, tune_para=False):
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
-        print('--> EPOCH {}:'.format(i), file=f)
+        # print('--> EPOCH {}:'.format(i), file=f)
         t1 = time()
         tra_loss = 0.0
         tra_obj = 0.0
@@ -55,8 +55,8 @@ def train(model, optimizer, tune_para=False):
         ##
         for j in range(bat_count):
             optimizer.zero_grad()
-            print('--> BATCH {}:'.format(j), file=f)
-            print('--> TRAINING', file=f)
+            # print('--> BATCH {}:'.format(j), file=f)
+            # print('--> TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
             ## trying something
@@ -65,9 +65,9 @@ def train(model, optimizer, tune_para=False):
                 print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
                 tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
                 torch.set_printoptions(profile="full")
-                print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
+                # print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
                 tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
-                print(tmp_arr, file=f)
+                # print(tmp_arr, file=f)
                 torch.set_printoptions(profile="default")
                 with torch.no_grad():
                     for var in tra_vars:
@@ -137,7 +137,7 @@ def train(model, optimizer, tune_para=False):
         print('---->>>>> Testing')
         # print('--> TESTING', file=f)
         test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
-        print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
+        # print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
         # torch.set_printoptions(profile="full")
         # tmp_arr = np.concatenate((test_adv_pred.data.numpy(), model.tes_gt), axis=1)
         # print(tmp_arr, file=f)
@@ -165,6 +165,8 @@ def train(model, optimizer, tune_para=False):
         print('epoch:', i, ('time: %.4f ' % (t4 - t1)))
     print('\nBest Valid performance:', best_valid_perf)
     print('\tBest Test performance:', best_test_perf)
+    print('Best Valid performance: ', best_valid_perf, file=f)
+    print('\tBest Test performance:', best_test_perf, file=f)
     visual_loss(training_loss, validation_loss)
     visual_accuracy(training_accuracy, validation_accuracy, testing_accuracy)
 
@@ -192,6 +194,7 @@ def visual_accuracy(training_acc, validation_acc, testing_acc):
 
 if __name__ == '__main__':
     torch.autograd.set_detect_anomaly(True)
+
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
@@ -233,7 +236,7 @@ if __name__ == '__main__':
     }
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     dataname = args.path.split('/')[2]
-    f = open('checkInputsAtDifferentStages_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
+    f = open('run_results_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
     if args.zeus == 1:
         args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
         args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'
@@ -273,7 +276,18 @@ if __name__ == '__main__':
     lstm.apply(initialize_weights)
     optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr']) # TODO: lower learning rate to 1e-4 or even less and then try again.
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
-    if args.action == 'train':
-        train(model=lstm, optimizer=optimizer)
+    for i in range(0,3):
+        seed = i+100
+        for j in range(0,3):
+            torch.manual_seed(seed)
+            print('run index = {} seed = {}'.format(j, seed), file=f)
+            if args.action == 'train':
+                train(model=lstm, optimizer=optimizer)
+
+    # seed = 95
+    # torch.manual_seed(seed)
+    # print('seed = {}'.format(seed), file=f)
+    # if args.action == 'train':
+    #     train(model=lstm, optimizer=optimizer)
 
     f.close()

@@ -78,9 +78,9 @@ def train(model, optimizer, tune_para=False):
             tra_acc += cur_tra_perf['acc']
             ##
 
-
-            loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters['alp'] * l2 # TODO: - the l2 loss is MUCH bigger than the other 2 losses, which makes it dominant. Other losses have 0 effect.
-            loss.backward(retain_graph=True)    # TODO: - Not sure you want the retain_graph = true.
+            loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters[
+                'alp'] * l2  # TODO: - the l2 loss is MUCH bigger than the other 2 losses, which makes it dominant. Other losses have 0 effect.
+            loss.backward(retain_graph=True)  # TODO: - Not sure you want the retain_graph = true.
             optimizer.step()
             tra_loss += model.loss
             tra_obj += loss.data
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                         default=1e-2)
     parser.add_argument('-s', '--step', help='steps to make prediction', type=int, default=1)
     parser.add_argument('-b', '--batch_size', help='batch size', type=int, default=1024)
-    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=350) #150
+    parser.add_argument('-e', '--epoch', help='epoch', type=int, default=350)  # 150
     parser.add_argument('-r', '--learning_rate', help='learning rate', type=float, default=1e-2)
     parser.add_argument('-g', '--gpu', type=int, default=0, help='use gpu')
     parser.add_argument('-q', '--model_path', help='path to load model', type=str,
@@ -223,6 +223,7 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--adv', type=int, help='adversarial training', default=0)
     parser.add_argument('-hi', '--hinge_loss', type=int, help='use hinge loss', default=1)
     parser.add_argument('-rl', '--reload', type=int, help='use pre-trained parameters', default=0)
+    parser.add_argument('-seed', '--seed', type=int, help='seed for run', default=110)
     args = parser.parse_args()
     print(args)
 
@@ -236,7 +237,9 @@ if __name__ == '__main__':
     }
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     dataname = args.path.split('/')[2]
-    f = open('run_results_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size),timestamp), 'w')
+    f = open(
+        'run_results_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size), timestamp),
+        'w')
     if args.zeus == 1:
         args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
         args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'
@@ -274,11 +277,12 @@ if __name__ == '__main__':
         device = 'cpu'
     lstm.to(device)
     lstm.apply(initialize_weights)
-    optimizer = optim.Adam(lstm.parameters(), lr=parameters['lr']) # TODO: lower learning rate to 1e-4 or even less and then try again.
+    optimizer = optim.Adam(lstm.parameters(),
+                           lr=parameters['lr'])  # TODO: lower learning rate to 1e-4 or even less and then try again.
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
-    for i in range(0,3):
-        seed = i+100
-        for j in range(0,3):
+    for i in range(0, 3):
+        seed = i + args.seed
+        for j in range(0, 3):
             torch.manual_seed(seed)
             print('run index = {} seed = {}'.format(j, seed), file=f)
             if args.action == 'train':

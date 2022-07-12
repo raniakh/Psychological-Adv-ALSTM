@@ -93,7 +93,7 @@ class LSTM(nn.Module):
         self.tra_pv, self.tra_wd, self.tra_gt, \
         self.val_pv, self.val_wd, self.val_gt, \
         self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data(
-            self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq']
+            self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
         )
         self.fea_dim = self.tra_pv.shape[2]
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']

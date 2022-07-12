@@ -4,7 +4,7 @@ import os
 import torch
 
 
-def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
+def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
                   date_format='%Y-%m-%d'):
     fnames = [fname for fname in os.listdir(data_path) if
               os.path.isfile(os.path.join(data_path, fname))]
@@ -18,7 +18,7 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
             skip_header=False
         )
         # print('data shape:', single_EOD.shape)
-        data_EOD.append(single_EOD) # list of arrays, array = file
+        data_EOD.append(single_EOD)  # list of arrays, array = file
     fea_dim = data_EOD[0].shape[1] - 2  # number of columns - 2,  why -2?
 
     trading_dates = np.genfromtxt(
@@ -29,9 +29,9 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
 
     # transform the trading dates into a dictionary with index, at the same
     # time, transform the indices into a dictionary with weekdays
-    dates_index = {}    # dates_index={trading day date: index}
+    dates_index = {}  # dates_index={trading day date: index}
     # indices_weekday = {}
-    data_wd = np.zeros([len(trading_dates), 5], dtype=float)    # data_wd=[index: [1,0,0,0,0]] (1 in the
+    data_wd = np.zeros([len(trading_dates), 5], dtype=float)  # data_wd=[index: [1,0,0,0,0]] (1 in the
     # corresponding weekday, weekdays are [Monday, Friday]) for each trading date
     wd_encodings = np.identity(5, dtype=float)  # I_5x5
     for index, date in enumerate(trading_dates):
@@ -93,10 +93,14 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
             continue
         for tic_ind in range(len(fnames)):
             if abs(data_EOD[tic_ind][date_ind][-2]) > 1e-8 and \
-                    data_EOD[tic_ind][date_ind - seq: date_ind, :].min() > -123320: #if data_EOD[stock][day][next to last column]>1e-8 and data_EOD[stock][10 days history]=matrix of 10x15 .min()>-123320
-                tra_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, : -2]  # N (example 10) day history of stock without last 2 columns
-                tra_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]  # the corresponding week days for the N day history
-                tra_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2  # Rania: (data_EOD[stock][date][next to last column]+1)/2 -> what is this value? classification 1 or 0
+                    data_EOD[tic_ind][date_ind - seq: date_ind,
+                    :].min() > -123320:  # if data_EOD[stock][day][next to last column]>1e-8 and data_EOD[stock][10 days history]=matrix of 10x15 .min()>-123320
+                tra_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind,
+                                  : -2]  # N (example 10) day history of stock without last 2 columns
+                tra_wd[ins_ind] = data_wd[date_ind - seq: date_ind,
+                                  :]  # the corresponding week days for the N day history
+                tra_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][
+                                          -2] + 1) / 2  # Rania: (data_EOD[stock][date][next to last column]+1)/2 -> what is this value? classification 1 or 0
                 ins_ind += 1
 
     # validation
@@ -134,15 +138,12 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2,
                 tes_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]
                 tes_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2
                 ins_ind += 1
-    # tra_pv = tra_pv[:100, :, :]
-    # tra_wd = tra_wd[:100, :, :]
-    # tra_gt = tra_gt[:100, :]
-    # tra_gt = np.ones_like(tra_gt)
 
-    ## Enable for hinge loss, Disable for BCE
-    # tra_gt[tra_gt == 0] = -1
-    # val_gt[val_gt == 0] = -1
-    # tes_gt[tes_gt == 0] = -1
+    # Enable for hinge loss, Disable for BCE
+    if hinge:
+        tra_gt[tra_gt == 0] = -1
+        val_gt[val_gt == 0] = -1
+        tes_gt[tes_gt == 0] = -1
     return tra_pv, tra_wd, tra_gt, val_pv, val_wd, val_gt, tes_pv, tes_wd, tes_gt
 
 

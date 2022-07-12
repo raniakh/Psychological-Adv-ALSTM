@@ -21,7 +21,8 @@ def evaluate(prediction, ground_truth, hinge=False, reg=False):
     else:
         pred = torch.round(prediction)
     try:
-        # pred[pred == 0] = -1    ## Enable for hinge loss, Disable for BCE
+        if hinge:
+            pred[pred == 0] = -1  # Enable for hinge loss, Disable for BCE
         performance['acc'] = accuracy_score(ground_truth, pred.data.numpy())
     except Exception:
         np.savetxt('prediction', pred.data.numpy(), delimiter=',')

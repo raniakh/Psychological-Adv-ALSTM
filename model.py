@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-from load import load_cla_data
+from load import load_cla_data, load_cla_data_shuffle
 from evaluator import evaluate
 # from lossImpl import hingeloss
 from sklearn.metrics import hinge_loss
@@ -52,7 +52,7 @@ def initialize_weights(m):
 class LSTM(nn.Module):
     def __init__(self, data_path, model_path, model_save_path, parameters, steps=1, epochs=50,
                  batch_size=156, gpu=False, tra_date='2014-01-02', val_date='2015-08-03', tes_date='2015-10-01',
-                 att=0, hinge=0, fix_init=0, adv=0, reload=0):
+                 att=0, hinge=0, fix_init=0, adv=0, reload=0, shuffle=0):
         super(LSTM, self).__init__()
         self.data_path = data_path
         self.model_path = model_path
@@ -90,11 +90,18 @@ class LSTM(nn.Module):
         self.tra_date = tra_date
         self.val_date = val_date
         self.tes_date = tes_date
-        self.tra_pv, self.tra_wd, self.tra_gt, \
-        self.val_pv, self.val_wd, self.val_gt, \
-        self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data(
-            self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
-        )
+        if shuffle == 0:
+            self.tra_pv, self.tra_wd, self.tra_gt, \
+            self.val_pv, self.val_wd, self.val_gt, \
+            self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data(
+                self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
+            )
+        else:
+            self.tra_pv, self.tra_wd, self.tra_gt, \
+            self.val_pv, self.val_wd, self.val_gt, \
+            self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data_shuffle(
+                self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
+            )
         self.fea_dim = self.tra_pv.shape[2]
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']
         # self.lstm_cell = nn.LSTMCell(input_size=self.fea_dim,hidden_size=self.paras['unit'])

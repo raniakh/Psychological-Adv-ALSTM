@@ -169,6 +169,7 @@ def train(model, optimizer, tune_para=False):
     print('\tBest Test performance:', best_test_perf, file=f)
     visual_loss(training_loss, validation_loss)
     visual_accuracy(training_accuracy, validation_accuracy, testing_accuracy)
+    return best_valid_perf, best_test_perf
 
 
 def visual_loss(training_loss, validation_loss):
@@ -192,9 +193,18 @@ def visual_accuracy(training_acc, validation_acc, testing_acc):
     plt.show()
 
 
+def return_log_dict():
+    import requests
+    requests.post(
+        'https://hooks.zapier.com/hooks/catch/6650861/bqrfvgx/',
+        json=log_dict
+    )
+    return log_dict
+
+
 if __name__ == '__main__':
     torch.autograd.set_detect_anomaly(True)
-
+    log_dict = {}
     desc = 'the lstm model'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-p', '--path', help='path of pv data', type=str,
@@ -224,8 +234,23 @@ if __name__ == '__main__':
     parser.add_argument('-hi', '--hinge_loss', type=int, help='use hinge loss', default=1)
     parser.add_argument('-rl', '--reload', type=int, help='use pre-trained parameters', default=0)
     parser.add_argument('-seed', '--seed', type=int, help='seed for run', default=110)
+    parser.add_argument('-shuffle', '--shuffle', type=int, help='shuffle train and validation set', default=0)
     args = parser.parse_args()
     print(args)
+    log_dict["l"] = args.seq
+    log_dict["u"] = args.unit
+    log_dict["alpha_l2"] = args.alpha_l2
+    log_dict["att"] = args.att
+    log_dict["batch_size"] = args.batch_size
+    log_dict["beta_adv (la)"] = args.beta_adv
+    log_dict["epochs"] = args.epoch
+    log_dict["learning rate"] = args.learning_rate
+    log_dict["epsilon_adv (le)"] = args.epsilon_adv
+    log_dict["hinge_loss"] = args.hinge_loss
+    log_dict["data_path"] = args.path
+    log_dict["seed"] = args.seed
+    log_dict["shuffle"] = args.shuffle
+    log_dict["v"] = args.adv
 
     parameters = {
         'seq': int(args.seq),
@@ -265,7 +290,7 @@ if __name__ == '__main__':
         steps=args.step,
         epochs=args.epoch, batch_size=args.batch_size, gpu=args.gpu,
         tra_date=tra_date, val_date=val_date, tes_date=tes_date, att=args.att,
-        hinge=args.hinge_loss, fix_init=args.fix_init, adv=args.adv, reload=args.reload
+        hinge=args.hinge_loss, fix_init=args.fix_init, adv=args.adv, reload=args.reload, shuffle=args.shuffle
     )
 
     pytorch_total_params = sum(p.numel() for p in lstm.parameters() if p.requires_grad)
@@ -282,16 +307,22 @@ if __name__ == '__main__':
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     for i in range(0, 3):
         seed = i + args.seed
-        for j in range(0, 3):
-            torch.manual_seed(seed)
-            print('run index = {} seed = {}'.format(j, seed), file=f)
-            if args.action == 'train':
-                train(model=lstm, optimizer=optimizer)
+        torch.manual_seed(seed)
+        # for j in range(0, 3):
+        #     torch.manual_seed(seed)
+        #     print('run index = {} seed = {}'.format(j, seed), file=f)
+        if args.action == 'train':
+            best_valid_perf, best_test_perf = train(model=lstm, optimizer=optimizer)
+            log_dict["Best Val acc run index {}".format(i)] = best_valid_perf['acc']
+            log_dict["Best Val mcc run index {}".format(i)] = best_valid_perf['mcc']
+            log_dict["Best Test acc run index {}".format(i)] = best_test_perf['acc']
+            log_dict["Best Test mcc run index {}".format(i)] = best_test_perf['mcc']
 
-    # seed = 95
+    tmp_dict = return_log_dict()
+    # seed = 110
     # torch.manual_seed(seed)
     # print('seed = {}'.format(seed), file=f)
     # if args.action == 'train':
-    #     train(model=lstm, optimizer=optimizer)
+    #     best_valid_perf, best_test_perf = train(model=lstm, optimizer=optimizer)
 
     f.close()

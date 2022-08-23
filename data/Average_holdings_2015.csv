@@ -1,0 +1,499 @@
+,InstrumentID,days,InstrumentDisplayName,Symbol
+0,1,76.0,EUR/USD,EURUSD
+1,2,71.0,GBP/USD,GBPUSD
+2,3,52.0,NZD/USD,NZDUSD
+3,4,53.0,USD/CAD,USDCAD
+4,5,61.0,USD/JPY,USDJPY
+5,6,47.0,USD/CHF,USDCHF
+6,7,65.0,AUD/USD,AUDUSD
+7,8,49.0,EUR/GBP,EURGBP
+8,9,33.0,EUR/CHF,EURCHF
+9,10,41.0,EUR/JPY,EURJPY
+10,11,39.0,GBP/JPY,GBPJPY
+11,12,32.0,EUR/AUD,EURAUD
+12,13,28.0,EUR/CAD,EURCAD
+13,14,36.0,AUD/JPY,AUDJPY
+14,15,30.0,CAD/JPY,CADJPY
+15,16,34.0,CHF/JPY,CHFJPY
+16,17,39.0,Oil,OIL
+17,18,64.0,Gold,GOLD
+18,19,51.0,Silver,SILVER
+19,27,44.0,SPX500,SPX500
+20,28,34.0,NSDQ100 NAS,NSDQ100
+21,29,48.0,DJ30,DJ30
+22,30,26.0,UK100,UK100
+23,31,25.0,FRA40,FRA40
+24,32,58.0,GER30,GER30
+25,33,38.0,AUS200,AUS200
+26,34,22.0,ESP35,ESP35
+27,35,5.0,ITA40,ITA40
+28,36,4.0,JPN225,JPN225
+29,37,25.0,SUI30,SUI30
+30,39,36.0,USD/HKD,USDHKD
+31,43,31.0,EUSTX50,EUSTX50
+32,44,17.0,USD/RUB,USDRUB
+33,45,19.0,USD/CNH,USDCNH
+34,46,23.0,AUD/CHF,AUDCHF
+35,47,12.0,AUD/CAD,AUDCAD
+36,48,19.0,AUD/NZD,AUDNZD
+37,49,17.0,EUR/NZD,EURNZD
+38,50,22.0,GBP/AUD,GBPAUD
+39,51,28.0,GBP/CHF,GBPCHF
+40,52,20.0,GBP/NZD,GBPNZD
+41,53,12.0,NZD/CAD,NZDCAD
+42,54,12.0,NZD/CHF,NZDCHF
+43,55,13.0,NZD/JPY,NZDJPY
+44,56,16.0,CAD/CHF,CADCHF
+45,1001,104.0,Apple,AAPL
+46,1002,130.0,Alphabet,GOOG
+47,1003,132.0,Facebook,FB
+48,1004,63.0,Microsoft,MSFT
+49,1005,56.0,Amazon,AMZN
+50,1006,65.0,Altaba Inc,AABA
+51,1007,74.0,Zynga,ZNGA
+52,1008,53.0,Alcoa,AA
+53,1009,76.0,American Express CO,AXP
+54,1010,29.0,Boeing,BA
+55,1011,45.0,Bank of America Corp,BAC
+56,1012,62.0,Caterpillar,CAT
+57,1013,45.0,Cisco,CSCO
+58,1014,80.0,Chevron,CVX
+59,1015,28.0,Du-Pont,DDOld
+60,1016,61.0,Walt Disney,DIS
+61,1017,43.0,General Electric Co,GE
+62,1018,23.0,Home Depot Inc,HD
+63,1019,48.0,Hewlett Packard,HPQ
+64,1020,65.0,IBM,IBM
+65,1021,51.0,Intel,INTC
+66,1022,56.0,Johnson & Johnson,JNJ
+67,1023,25.0,JPMorgan Chase & Co,JPM
+68,1024,68.0,Coca-Cola,KO
+69,1025,45.0,McDonalds,MCD
+70,1026,62.0,3M,MMM
+71,1027,44.0,Merck,MRK
+72,1028,43.0,Pfizer,PFE
+73,1029,42.0,Procter & Gamble Co,PG
+74,1030,46.0,AT&T Inc,T
+75,1031,58.0,Travelers,TRV
+76,1032,23.0,UnitedHealth,UNH
+77,1033,33.0,United-Technologies,UTX
+78,1034,27.0,Verizon,VZ
+79,1035,50.0,Wal-Mart,WMT
+80,1036,35.0,Exxon-Mobil,XOM
+81,1037,38.0,Citigroup,C
+82,1038,51.0,Honda,HMC
+83,1039,46.0,HSBC,HSBC
+84,1040,62.0,Manchester United,MANU
+85,1041,47.0,Mastercard,MA
+86,1042,43.0,NIKE,NKE
+87,1043,44.0,PepsiCo,PEP
+88,1044,74.0,Sony,SNE
+89,1045,35.0,Toyota,TM
+90,1046,50.0,Visa,V
+91,1047,51.0,Vodafone,VOD
+92,1048,63.0,Time-Warner,TWX
+93,1049,57.0,Deutsche-Bank,DB
+94,1050,83.0,Colgate-Palmolive,CL
+95,1051,53.0,eBay,EBAY
+96,1053,30.0,Yandex NV,YNDX
+97,1054,16.0,Qiwi Plc,QIWI
+98,1055,26.0,China Mobile Limited,CHL
+99,1056,8.0,Renren Inc.,RENN
+100,1100,44.0,Telecom Argentina SA,TEO
+101,1101,49.0,Ternium SA,TX
+102,1102,63.0,Petroleo Brasileiro SA Petrobras,PBR
+103,1103,53.0,Vale SA,VALE
+104,1104,77.0,Banco Santander SA (US),SAN
+105,1105,43.0,Telefonica SA (US),TEF
+106,1106,22.0,America Movil,NYSE
+107,1107,44.0,Cemex,NYSE
+108,1109,41.0,Grupo Televisa,NYSE
+109,1110,61.0,SanDisk Corp,SNDK
+110,1111,76.0,Tesla Motors,NASDAQ
+111,1112,63.0,Ford Motor Co,F
+112,1113,41.0,Las Vegas Sands Corp,LVS
+113,1114,47.0,LinkedIn Corp,LNKD
+114,1115,71.0,Nokia Oyj,NOK
+115,1116,32.0,Potash Corporation of Saskatchewan,POT
+116,1117,51.0,First Solar,NASDAQ
+117,1119,38.0,Western Union Company,WU
+118,1120,43.0,Gap,NYSE
+119,1121,47.0,Ralph Lauren Corp,RL
+120,1122,47.0,Harley-Davidson Inc,HOG
+121,1123,44.0,TripAdvisor Inc,TRIP
+122,1124,52.0,Electronic Arts,NASDAQ
+123,1125,52.0,Urban Outfitters Inc.,URBN
+124,1126,36.0,Adobe Systems Inc,ADBE
+125,1127,109.0,Netflix,NASDAQ
+126,1128,16.0,Motorola Solutions,NYSE
+127,1129,49.0,Western Digital Corporation,WDC
+128,1130,50.0,Micron Technology,NASDAQ
+129,1131,39.0,Abercrombie & Fitch Company,ANF
+130,1133,49.0,American Capital Agency Corp.,AGNC
+131,1134,42.0,Autodesk,NASDAQ
+132,1135,60.0,Oracle Corporation,ORCL
+133,1136,25.0,Lockheed Martin Corporation,LMT
+134,1137,45.0,NVIDIA Corporation,NVDA
+135,1138,52.0,FedEx Corporation,FDX
+136,1139,54.0,Noble Energy Inc,NBL
+137,1140,39.0,Avis Budget Group Inc,CAR
+138,1141,38.0,Baidu,NASDAQ
+139,1142,48.0,Starbucks Corporation,SBUX
+140,1143,30.0,Amgen Inc,AMGN
+141,1144,44.0,Activision Blizzard,NASDAQ
+142,1145,24.0,Check Point Software Technologies,CHKP
+143,1146,38.0,Mosaic Co,MOS
+144,1147,16.0,PetSmart Inc.,PETM
+145,1148,45.0,Dr Pepper Snapple Group,NYSE
+146,1149,40.0,Constellation Brands Inc.,STZ
+147,1153,80.0,Twitter,TWTR
+148,1154,48.0,King Digital Entertainment PLC,KING
+149,1155,66.0,Alibaba,BABA
+150,1200,33.0,Siemens Aktiengesellschaft,SIE
+151,1201,53.0,BASF SE,BAS
+152,1202,33.0,SAP AG,SAP
+153,1203,34.0,Bayer AG,BAYN
+154,1204,31.0,Allianz SE,ALV
+155,1205,40.0,E.ON SE,EOAN
+156,1206,33.0,Daimler AG,DAI
+157,1207,32.0,Deutsche Telekom AG,DTE
+158,1209,61.0,Linde Aktiengesellschaft,LNA
+159,1210,51.0,Volkswagen AG,VOW3
+160,1211,64.0,Bayerische Motoren Werke Aktiengesellschaft,BMW
+161,1212,46.0,Muenchener Rueckvrschrng Gslchft AG Mnch,MUV2
+162,1213,32.0,RWE AG,RWE
+163,1214,20.0,Fresenius Medical Care AG & Co. KGAA,FME
+164,1215,37.0,Adidas AG,ADS
+165,1216,34.0,Deutsche Post AG,DPW
+166,1217,21.0,Fresenius SE & Co KGaA,FRE
+167,1218,18.0,Henkel AG & Co. KGaA,HEN3
+168,1219,18.0,Deutsche Boerse AG,DB1
+169,1220,40.0,ThyssenKrupp AG,TKA
+170,1221,28.0,Infineon Technologies AG,IFX
+171,1222,27.0,K+S Aktiengesellschaft,SDF
+172,1225,8.0,Beiersdorf AG,BEI
+173,1226,23.0,HeidelbergCement AG,HEI.DE
+174,1227,46.0,Deutsche Lufthansa Aktiengesellschaft,LHA
+175,1228,34.0,Continental AG,CON
+176,1230,19.0,Hugo Boss AG,BOSSd
+177,1231,16.0,Accor S.A.,AC
+178,1232,11.0,Credit Agricole S.A.,ACA
+179,1233,11.0,Air Liquide SA,AI
+180,1234,24.0,AIRBUS GROUP,AIR
+181,1235,12.0,Alstom SA,ALO
+182,1236,7.0,Alcatel-Lucent,ALU
+183,1237,10.0,Danone,BN
+184,1238,9.0,BNP Paribas SA,BNP
+185,1239,17.0,Carrefour SA,CA
+186,1240,22.0,Cap Gemini S.A.,CAP
+187,1241,17.0,AXA Group,CS
+188,1242,12.0,Vinci S.A,DG
+189,1243,15.0,Electricite de France SA,EDF
+190,1244,10.0,Essilor International SA,EL
+191,1245,12.0,Bouygues SA,EN
+192,1246,47.0,TOTAL S.A.,FP
+193,1247,8.0,Valeo SA,FR
+194,1248,10.0,Societe Generale Group,GLE
+195,1249,18.0,Engie SA,ENGI
+196,1250,4.0,Kering SA,KER
+197,1251,11.0,Lafarge S.A.,LG
+198,1252,10.0,Legrand SA,LR
+199,1253,12.0,LVMH Moet Hennessy Louis Vuitton SA,MC
+200,1254,10.0,Compagnie Generale DES Etablissements Michelin SCA,ML
+201,1255,40.0,ArcelorMittal,MTS
+202,1256,6.0,LOreal SA,OR
+203,1257,48.0,Orange,ORA
+204,1258,51.0,PUB,PUB
+205,1259,24.0,Pernod-Ricard SA,RI
+206,1260,6.0,Renault ,RNO
+207,1261,16.0,SAF,SAF
+208,1262,19.0,Sanofi,SAN
+209,1263,13.0,Compagnie de Saint-Gobain S.A.,SGO
+210,1264,11.0,SOLVAY,SOLB
+211,1265,3.0,Schneider Electric SE,SU
+212,1266,10.0,Technip SA,TEC
+213,1267,11.0,Peugeot S.A.,UG
+214,1268,12.0,Unibail Rodamco,UL
+215,1269,21.0,Veolia Environnement S.A.,VIE
+216,1270,23.0,Vivendi,VIV.PA
+217,1271,6.0,A2A Group,A2A
+218,1272,7.0,Autogrill,AGL
+219,1273,2.0,Atlantia Develops,ATL
+220,1274,6.0,Azimut Holding,AZM
+221,1275,7.0,Montepaschi Banking Groups,BMPS
+222,1276,1.0,Banco Popolare SC,BP
+223,1277,3.0,BPER Banca,BPE
+224,1279,8.0,CNH Industrial Group,CNHI
+225,1280,8.0,Davide Campari - Milano Beverage,CPR
+226,1281,11.0,Enel Group company,EGPW
+227,1282,6.0,Enel Power Company,ENEL
+228,1283,7.0,Eni Energy Company,ENI
+229,1284,13.0,Exor Investment Company,EXO
+230,1285,5.0,Fiat Chrysler Automobiles,FCA
+231,1286,8.0,Leonardo Finmeccanica,LDO
+232,1287,11.0,Generali Group,GASI
+233,1288,11.0,Intesa Sanpaolo Group,ISP
+234,1289,7.0,Luxottica Group,LUX
+235,1290,12.0,Mediobanca Investment Bank,MDBI
+236,1291,7.0,Mediolanum Group,MED
+237,1292,4.0,Moncler,MONC
+238,1293,8.0,Mediaset Group,MS
+239,1295,5.0,Bank Of Milano Cooperative Company,PMI
+240,1296,1.0,Prysmian Group,PRY
+241,1297,4.0,Salvatore Ferragamo Company,SFER
+242,1298,4.0,Saipem Oil & Gas Industry,SPM
+243,1299,1.0,Snam Group,SRG
+244,1300,6.0,STMicroelectronics Company,STM
+245,1301,2.0,Ansaldo STS Company,STS
+246,1302,10.0,Tenaris Group,TEN
+247,1303,4.0,Telecom Italia Group,TLIT
+248,1304,15.0,Tods Group,TOD
+249,1305,5.0,TERNA Eectricity Group,TRN
+250,1306,3.0,UBI Banca Group,UBI
+251,1307,7.0,UniCredit Commercial Bank,UCG
+252,1308,4.0,UnipolSai multi-business insurance company,US
+253,1310,15.0,Yoox Net-A-Porter Group,YNAP
+254,1311,2.0,Abertis,ABE
+255,1312,1.0,Abengoa B,ABG-P
+256,1313,6.0,ACS,ACS
+257,1314,6.0,Amadeus IT Hold -A-,AMS
+258,1315,5.0,Acciona,ANA
+259,1316,8.0,BBVA,BBVA
+260,1317,5.0,Bankia S.A,BKIA
+261,1318,21.0,Bankinter,BKT
+262,1319,8.0,Bolsas Y Mercados,BME
+263,1320,5.0,Caixabank,CABK
+264,1321,8.0,DIA S.A.,DIAm
+265,1322,1.0,Endesa,ELE
+266,1323,1.0,Enagas,ENG
+267,1324,2.0,Fomento de Construcciones,FCC
+268,1325,8.0,Ferrovial,FER
+269,1326,10.0,Siemens Gamesa Renewable Energy SA,SGRE
+270,1327,5.0,Naturgy Energy Group,Bolsa de Madrid
+271,1328,8.0,Grifols A,GRF
+272,1330,2.0,Iberdrola,IBE
+273,1331,5.0,Indra Sistemas A,IDR
+274,1332,10.0,Inditex,ITX
+275,1334,8.0,Mapfre,MAP
+276,1336,4.0,OHL,OHL
+277,1338,9.0,Red Electrica Corp,REE
+278,1339,7.0,Repsol,REP
+279,1340,6.0,Banco Sabadell,SAB
+280,1342,10.0,Sacyr,SCYR
+281,1344,6.0,Mediaset Espana,TL5
+282,1345,6.0,Tecnicas Reunidas,TRE
+283,1346,3.0,Gazprom OAO,OGZDL
+284,1349,3.0,Lukoil OAO,LKODL
+285,1353,5.0,NOVATEK OAO,NVTKL
+286,1357,1.0,Rosneft OAO,ROSNL
+287,1358,1.0,Sberbank of Russia,SBERL
+288,1360,1.0,Surgutneftegas OAO,SGGDL
+289,1361,1.0,Tatneft OAO,ATADL
+290,1368,3.0,Qihoo 360 Technology,QIHU
+291,1370,1.0,Jumei Intl Holdings,JMEI
+292,1371,1.0,ChangYou.com,CYOU
+293,1373,1.0,Qunar Cayman Islands,QUNR
+294,1377,2.0,NetEase,NTES
+295,1378,2.0,JD.com,JD
+296,1379,1.0,Trip.com Group Ltd,TCOM
+297,1380,1.0,Autohome,ATHM
+298,1382,1.0,51Job,JOBS
+299,1450,3.0,Accenture PLC,ACN
+300,1451,3.0,American Airlines Group Inc,AAL
+301,1452,1.0,AbbVie Inc,ABBV
+302,1454,1.0,Biogen Inc,BIIB
+303,1457,1.0,VIACOMCBS,CBS
+304,1458,3.0,Celgene Corp,CELG
+305,1459,1.0,Comcast Corp,CMCSA
+306,1460,1.0,Capital One Financial Corp,COF
+307,1461,1.0,Costco Wholesale Corp,COST
+308,1462,1.0,CVS Health Corp,CVS
+309,1463,1.0,EMC Corp,EMC
+310,1464,5.0,Twenty-First Century Fox Inc,FOX
+311,1465,1.0,Gilead Sciences Inc,GILD
+312,1466,3.0,GoPro Inc,GPRO
+313,1467,2.0,Goldman Sachs Group Inc,GS
+314,1469,4.0,Honeywell International Inc,HON
+315,1472,1.0,Kellogg Co,K
+316,1473,6.0,Capri Holdings Ltd,CPRI
+317,1474,1.0,Lowes Companies Inc,LOW
+318,1476,1.0,McKesson Corp,MCK
+319,1477,1.0,Medtronic PLC,MDT
+320,1478,1.0,Metlife Inc,MET
+321,1481,3.0,Booking Holdings Inc,BKNG
+322,1482,3.0,Philip Morris International Inc,PM
+323,1484,3.0,PayPal Holdings,PYPL
+324,1485,3.0,Qualcomm Inc,QCOM
+325,1486,1.0,Royal Dutch Shell Shs -B- Sponsored American Deposit Receipt Repr 2 Shs B,RDS.B
+326,1487,2.0,Sprint Corporation,S
+327,1488,4.0,Shake Shack Inc,SHAK
+328,1490,1.0,Target Corp,TGT
+329,1491,6.0,Tata Motors Shs Sponsored American Deposit Receipt Repr 5 Shs,TTM
+330,1493,1.0,United Parcel Service Inc,UPS
+331,1494,6.0,Walgreens Boots Alliance Inc,WBA
+332,1495,2.0,Wells Fargo & Co,WFC
+333,1496,1.0,Williams Companies Inc,WMB
+334,1498,1.0,AmerisourceBergen Corp,ABC
+335,1500,2.0,Kroger Co,KR
+336,1501,1.0,General Motors Co,GM
+337,1503,6.0,Marathon Petroleum Corporation,MPC
+338,1504,2.0,Cardinal Health Inc,CAH
+339,1507,1.0,American International Group Inc,AIG
+340,1508,4.0,Dow Chemical Co,DOW
+341,1509,1.0,Aetna Inc,AET
+342,1510,2.0,ConocoPhillips Co,COP
+343,1511,3.0,Energy Transfer Equity LP,ET
+344,1512,1.0,Humana Inc,HUM
+345,1517,3.0,Plains GP Holdings LP,PAGP
+346,1518,3.0,World Fuel Services Corp,INT
+347,1520,2.0,Best Buy Co Inc,BBY
+348,1521,3.0,Delta Air Lines Inc (DE),DAL
+349,1522,1.0,HCA Holdings Inc,HCA
+350,1525,2.0,Tyson Foods Inc,TSN
+351,1526,1.0,Deere & Co,DE
+352,1528,6.0,Cigna Corp,CI
+353,1529,3.0,Mondelez International Inc,MDLZ
+354,1530,5.0,Intl FCStone Inc,INTL
+355,1534,6.0,General Dynamics Corp,GD
+356,1539,5.0,International Paper Co,IP
+357,1540,6.0,Qurate Retail Group inc,QRTEA
+358,1544,1.0,Emerson Electric Co,EMR
+359,1546,1.0,National Oilwell Varco Inc,NOV
+360,1547,4.0,Raytheon Co,RTN
+361,1550,6.0,Aflac Inc,AFL
+362,1551,1.0,Staples Inc,SPLS
+363,1552,3.0,Abbott Laboratories,ABT
+364,1555,1.0,Freeport-McMoRan Inc,FCX
+365,1560,2.0,Chesapeake Energy Corp,CHK
+366,1561,4.0,Xerox Corp,XRX
+367,1566,4.0,HollyFrontier Corp,HFC
+368,1567,3.0,Eli Lilly & Co,LLY
+369,1917,3.0,Ferrari NV,RACE
+370,1966,4.0,Marriott International Inc,MAR
+371,1967,2.0,Square,NYSE
+372,1968,2.0,Match Group,Nasdaq
+373,2000,18.0,Anglo American,AAL
+374,2001,20.0,Associated British Foods,ABF
+375,2002,23.0,Admiral Group,ADM
+376,2003,34.0,Aberdeen Asset Management,ADN
+377,2004,37.0,Aggreko,AGK
+378,2005,59.0,Ashtead Group,AHT
+379,2006,39.0,Amec Foster Wheeler Plc,AMFW
+380,2007,55.0,Antofagasta,ANTO
+381,2008,33.0,ARM Holdings,ARM
+382,2009,36.0,Aviva,AV
+383,2010,60.0,AstraZeneca,AZN
+384,2012,43.0,Babcock International,BAB
+385,2013,28.0,Barclays,BARC
+386,2014,29.0,British American Tobacco,BATS
+387,2015,25.0,BG Group,BG
+388,2016,57.0,British Land,BLND
+389,2017,15.0,BHP Billiton,BHP
+390,2018,20.0,Bunzl,BNZL
+391,2019,39.0,BP,BP
+392,2020,9.0,Burberry Group,BRBY
+393,2021,54.0,Sky PLC,SKY
+394,2022,45.0,BT Group,BT
+395,2023,49.0,Coca Cola Hellenic,CCH
+396,2024,24.0,Carnival,CCL
+397,2025,63.0,Centrica,CNA
+398,2026,25.0,Compass Group,CPG
+399,2027,17.0,Capita,CPI
+400,2029,35.0,Diageo,DGE
+401,2030,25.0,Experian,EXPN
+402,2031,46.0,easyJet,EZJ
+403,2032,37.0,Fresnillo,FRES
+404,2033,48.0,G4S,GFS
+405,2034,58.0,GKN,GKN
+406,2035,20.0,Glencore Plc,GLEN
+407,2036,26.0,GlaxoSmithKline,GSK
+408,2037,20.0,Hargreaves Lansdown,HL
+409,2038,45.0,Hammerson,HMSO
+410,2040,20.0,International Consolidated Airlines,IAG
+411,2042,19.0,IMI,IMI
+412,2043,24.0,Imperial Brands PLC,IMB
+413,2044,42.0,Intertek Group,ITRK
+414,2045,39.0,ITV,ITV
+415,2046,54.0,Johnson Matthey,JMAT
+416,2047,32.0,Kingfisher,KGF
+417,2048,8.0,Land Securities,LAND
+418,2049,17.0,Legal & General,LGEN
+419,2050,31.0,Lloyd's,LLOY
+420,2051,71.0,London Stock Exchange,LSE
+421,2052,15.0,Meggitt,MGGT
+422,2053,48.0,Marks & Spencer,MKS
+423,2054,28.0,Mondi,MNDI
+424,2055,27.0,Melrose Industries,MRO
+425,2056,55.0,Morrisons,MRW
+426,2057,17.0,National Grid,NG
+427,2058,28.0,Next,NXT
+428,2059,60.0,Old Mutual,OML
+429,2060,47.0,Petrofac,PFC
+430,2061,23.0,Prudential,PRU
+431,2062,29.0,Persimmon,PSN
+432,2063,44.0,Pearson,PSON
+433,2064,20.0,Reckitt Benckiser,RB
+434,2065,18.0,Royal Bank of Scotland,RBS
+435,2068,40.0,RELX PLC,REL
+436,2069,30.0,REXAM,REX
+437,2070,49.0,Rio Tinto,RIO
+438,2071,15.0,Royal Mail,RMG
+439,2072,17.0,Rolls-Royce,RR
+440,2073,60.0,Randgold Resources,RRS
+441,2074,47.0,RSA Insurance,RSA
+442,2075,20.0,Resolution,RSL
+443,2076,14.0,SABMiller,SAB
+444,2077,17.0,Sainsbury (J),SBRY
+445,2078,26.0,Schroders,SDR
+446,2080,35.0,Shire,SHP
+447,2081,43.0,Standard Life Aberdeen PLC,SLA
+448,2082,46.0,Smiths Group,SMIN
+449,2083,91.0,Smith & Nephew,SN
+450,2084,41.0,Frasers Group, FRAS
+451,2085,52.0,SSE,SSE
+452,2086,21.0,Standard Chartered,STAN
+453,2087,30.0,Severn Trent,SVT
+454,2088,50.0,Tate & Lyle,TATE
+455,2089,53.0,Tullow Oil,TLW
+456,2090,21.0,Travis Perkins,TPK
+457,2091,59.0,Tesco,TSCO
+458,2092,8.0,TUI Travel,TT
+459,2093,37.0,Unilever,ULVR
+460,2094,22.0,United Utilities,UU
+461,2096,48.0,Weir Group,WEIR
+462,2097,41.0,William Hill,WMH
+463,2098,19.0,Ferguson PLC,FERG
+464,2099,22.0,WPP,WPP
+465,2100,25.0,Whitbread,WTB
+466,2101,57.0,Daily Mail plc,DMGT
+467,3000,6.0,SPDR S&P 500 ETF,SPY
+468,3001,4.0,Emrg Mkts Index MSCI Ishares,EEM
+469,3002,5.0,Gold Miners ETF VanEck Vectors,GDX
+470,3003,5.0,Ishares MSCI JAPAN ETF,EWJ
+471,3004,6.0,Financial Select Sector SPDR,XLF
+472,3005,6.0,Ishares Russell 2000 ETF,IWM
+473,3006,5.0,Powershares QQQ,QQQ
+474,3007,6.0,United Stated Oil Fund,USO
+475,3008,6.0,Energy Select Sector SPDR,XLE
+476,3009,8.0,EAFE Index MSCI Ishares,EFA
+477,3010,9.0,FTSE China 25 Index Fund Ishares,FXI
+478,3011,6.0,Russia ETF VanEck Vectors,RSX
+479,3012,5.0,Brazil Index MSCI Ishares,EWZ
+480,3013,9.0,Utilities Select Sector SPDR,XLU
+481,3014,7.0,Junior Gold Miners ETF VanEck Vectors,GDXJ
+482,3015,7.0,DJ US Real Estate Ishares,IYR
+483,3016,6.0,SPDR S&P Oil & Gas Exploration & Prod,XOP
+484,3017,10.0,Healthcare Select Sector SPDR,XLV
+485,3018,5.0,US Natural Gas,UNG
+486,3019,7.0,Industrial Select Sector SPDR,XLI
+487,3020,6.0,20+ Year Trsy Bond Ishares,TLT
+488,3021,10.0,Technology Select Sector SPDR,XLK
+489,3022,6.0,Consumer Staples Select Sector SPDR,XLP
+490,3023,5.0,Iboxx $ High Yield Corporate Bd Ishares,HYG
+491,3024,11.0,Consumer Discret Select Sector SPDR,XLY
+492,3025,7.0,SPDR Gold,GLD
+493,3026,7.0,SPDR DOW 30 ETF,DIA
+494,3027,4.0,Proshares Ultra S&P 500 ,SSO
+495,3028,6.0,Ishares Nasdaq Biotechnology ,IBB
+496,3029,8.0,SPDR S&P Midcap 400,MDY
+497,100000,69.0,Bitcoin,BTC

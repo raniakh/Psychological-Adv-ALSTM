@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --job-name=rania-alstm
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=64gb
+#SBATCH --output=%x-%j.out
+#SBATCH --qos=normal
+
+srun --container-image=/home/rania.khoury/nvidia+pytorch+22.05-py3.sqsh --container-save=/home/rania.khoury/nvidia+pytorch+22.05-py3.sqsh --container-mounts /home/rania.khoury/rania/ALSTM:/workspace/ALSTM python3 /workspace/ALSTM/main.py -l 5 -u 4 -l2 0.05 -v 1 -rl 0 -la 0.1 -le 0.05 -r 0.003 -hi 1 -seed 121 -z 1

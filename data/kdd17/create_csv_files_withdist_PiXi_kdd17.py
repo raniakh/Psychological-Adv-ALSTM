@@ -136,10 +136,6 @@ def fillMissingData(df):
 
 def accountDistribution(df, stockId, StockSymbol):
     dist = dist_dict[stockId]
-    weighted_gmavg = dist[0]*df['gm_week'] + dist[1]*df['gm_2_weeks'] + dist[2]*df['gm_3_weeks']\
-                     + dist[3]*df['gm_4_weeks'] + dist[4] * df['gm_5_weeks'] + dist[5] * df['gm_6_weeks']
-    weighted_pravg = dist[0]*df['pr_week'] + dist[1]*df['pr_2_weeks'] + dist[2]*df['pr_3_weeks']\
-                     + dist[3]*df['pr_4_weeks'] + dist[4] * df['pr_5_weeks'] + dist[5] * df['pr_6_weeks']
     df.loc[:, 'gm_week'] = dist[0]*df['gm_week']
     df.loc[:, 'gm_2_weeks'] = dist[1]*df['gm_2_weeks']
     df.loc[:, 'gm_3_weeks'] = dist[2]*df['gm_3_weeks']

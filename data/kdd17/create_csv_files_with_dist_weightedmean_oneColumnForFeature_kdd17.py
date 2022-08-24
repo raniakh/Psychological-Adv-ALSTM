@@ -144,7 +144,7 @@ def accountDistribution(df, stockId, StockSymbol):
     df.loc[:, 'pr_weightedMean'] = weighted_pravg
 
     df.drop(columns=['gm_week', 'gm_2_weeks', 'gm_3_weeks', 'gm_4_weeks',
-                     'gm_5_weeks', 'gm_6_weeks', 'pr_weeks', 'pr_2_weeks',
+                     'gm_5_weeks', 'gm_6_weeks', 'pr_week', 'pr_2_weeks',
                      'pr_3_weeks', 'pr_4_weeks', 'pr_5_weeks', 'pr_6_weeks'],
             axis=1, inplace=True)
 
@@ -154,9 +154,12 @@ for stock in os.listdir(original_path):
         df_new = changeOurppedFiles(stock)
         # df_new = norm_df(df_new)
         fillMissingData(df_new)
+        tmp_last_columns = df_new.iloc[:, -2:].copy()
+        df_new.drop(df_new.iloc[:, -2:], inplace=True, axis=1)
         stockSymbol = stock.split('.')[0]
         stockId = symbol_to_stockId_map[stockSymbol]
         accountDistribution(df_new, stockId, stockSymbol)
+        df_new = pd.concat([df_new, pd.DataFrame(tmp_last_columns)], axis=1)
         df_new.to_csv(os.path.join(new_data_path, '{}'.format(stock)), header=None, index=None)
     except Exception as e:
         print(e)

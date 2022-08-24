@@ -5,7 +5,7 @@ import sys
 import yaml
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-#TODO - CHANGE CODE PER REQUEST -> this is still a copy of naive approach
+
 week, weeks2, weeks3, weeks4, weeks5, weeks6 = 7, 14, 21, 28, 35, 42
 weeks_list = [week, weeks2, weeks3, weeks4, weeks5, weeks6]
 raw_data_path = 'raw/'
@@ -120,12 +120,7 @@ def add_features(stock):
     stockId = symbol_to_stockId_map[stockSymbol]
     accountDistribution(df, stockId, stockSymbol)
 
-    return np.vstack([df['gm_week'].values, df['gm_2_weeks'].values,
-                      df['gm_3_weeks'].values, df['gm_4_weeks'].values,
-                      df['gm_5_weeks'].values, df['gm_6_weeks'].values,
-                      df['pr_week'].values, df['pr_2_weeks'].values,
-                      df['pr_3_weeks'].values, df['pr_4_weeks'].values,
-                      df['pr_5_weeks'].values, df['pr_6_weeks'].values]).T
+    return np.vstack([df['gm_weightedMean'].values, df['pr_weightedMean'].values]).T
 
 
 def changeOurppedFiles(stock, num_rows=0):
@@ -152,19 +147,13 @@ def accountDistribution(df, stockId, StockSymbol):
                      + dist[3]*df['gm_4_weeks'] + dist[4] * df['gm_5_weeks'] + dist[5] * df['gm_6_weeks']
     weighted_pravg = dist[0]*df['pr_week'] + dist[1]*df['pr_2_weeks'] + dist[2]*df['pr_3_weeks']\
                      + dist[3]*df['pr_4_weeks'] + dist[4] * df['pr_5_weeks'] + dist[5] * df['pr_6_weeks']
-    df.loc[:, 'gm_week'] = weighted_gmavg
-    df.loc[:, 'gm_2_weeks'] = weighted_gmavg
-    df.loc[:, 'gm_3_weeks'] = weighted_gmavg
-    df.loc[:, 'gm_4_weeks'] = weighted_gmavg
-    df.loc[:, 'gm_5_weeks'] = weighted_gmavg
-    df.loc[:, 'gm_6_weeks'] = weighted_gmavg
+    df.loc[:, 'gm_weightedMean'] = weighted_gmavg
+    df.loc[:, 'pr_weightedMean'] = weighted_pravg
 
-    df.loc[:, 'pr_week'] = weighted_pravg
-    df.loc[:, 'pr_2_weeks'] = weighted_pravg
-    df.loc[:, 'pr_3_weeks'] = weighted_pravg
-    df.loc[:, 'pr_4_weeks'] = weighted_pravg
-    df.loc[:, 'pr_5_weeks'] = weighted_pravg
-    df.loc[:, 'pr_6_weeks'] = weighted_pravg
+    df.drop(columns=['gm_week', 'gm_2_weeks', 'gm_3_weeks', 'gm_4_weeks',
+                     'gm_5_weeks', 'gm_6_weeks', 'pr_week', 'pr_2_weeks',
+                     'pr_3_weeks', 'pr_4_weeks', 'pr_5_weeks', 'pr_6_weeks'],
+            axis=1, inplace=True)
 
 
 for stock in os.listdir(original_path):

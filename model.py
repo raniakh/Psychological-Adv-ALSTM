@@ -103,6 +103,9 @@ class LSTM(nn.Module):
                 self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
             )
         self.fea_dim = self.tra_pv.shape[2]
+        self.in_pr = nn.Linear(in_features=6, out_features=6)
+        self.in_gm = nn.Linear(in_features=6, out_features=6)
+        self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']
         # self.lstm_cell = nn.LSTMCell(input_size=self.fea_dim,hidden_size=self.paras['unit'])
         ## TRY #OVERFIT TRAINING
@@ -133,7 +136,19 @@ class LSTM(nn.Module):
         pv_var, wd_var, gt_var = torch.from_numpy(pv_var).float(), torch.from_numpy(wd_var).float(), torch.from_numpy(
             gt_var).float()
 
-        feature_mapping_tmp = self.in_lat(pv_var)
+        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania' \
+                or './data/kdd17/preprocessed_rania' \
+                or '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
+                or '/workspace/ALSTM/data/kdd17/preprocessed_rania':
+            # preprocess_rania - concatenation + in_lat
+            original_features_mapping = self.in_rest(pv_var[:, :, 0:11])
+            gm_feature_mapping = self.in_gm(pv_var[:, :, 11:17])
+            pr_feature_mapping = self.in_pr(pv_var[:, :, 17:])
+            feature_concat = torch.cat((original_features_mapping, gm_feature_mapping, pr_feature_mapping), dim=2)
+            feature_mapping_tmp = self.in_lat(feature_concat)
+        else:
+            # original code
+            feature_mapping_tmp = self.in_lat(pv_var)
         feature_mapping = torch.tanh(feature_mapping_tmp)  # Added 08.03.22
         outputs, final_states = self.outputs_lstm(feature_mapping)
         if self.att:

@@ -266,9 +266,12 @@ if __name__ == '__main__':
         'run_results_{}_lr_{}_batchSize{}_{}.txt'.format(dataname, args.learning_rate, str(args.batch_size), timestamp),
         'w')
     if args.zeus == 1:
-        args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
-        args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'
-        args.model_save_path = '/workspace/ALSTM/tmp/model'
+        args.path = args.path.replace('.', '/workspace/ALSTM')
+        # args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
+        args.model_path = args.model_path.replace('.', '/wokrspace/ALSTM')
+        # args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'
+        args.model_save_path = args.model_save_path.replace('.', '/workspace/ALSTM')
+        # args.model_save_path = '/workspace/ALSTM/tmp/model'
 
     if 'stocknet' in args.path:
         tra_date = '2014-01-02'
@@ -303,7 +306,7 @@ if __name__ == '__main__':
     lstm.to(device)
     lstm.apply(initialize_weights)
     optimizer = optim.Adam(lstm.parameters(),
-                           lr=parameters['lr'])  # TODO: lower learning rate to 1e-4 or even less and then try again.
+                           lr=parameters['lr'])
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
     for i in range(0, 3):
         seed = i + args.seed

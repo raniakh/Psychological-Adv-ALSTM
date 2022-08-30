@@ -103,9 +103,16 @@ class LSTM(nn.Module):
                 self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
             )
         self.fea_dim = self.tra_pv.shape[2]
-        self.in_pr = nn.Linear(in_features=6, out_features=6)
-        self.in_gm = nn.Linear(in_features=6, out_features=6)
-        self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
+        print('self.fea_dim= ', self.fea_dim)
+        print('self.tra_pv,shape= ', self.tra_pv.shape)
+        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania' \
+                or self.data_path == './data/kdd17/preprocessed_rania' \
+                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania':
+            self.in_pr = nn.Linear(in_features=6, out_features=6)
+            self.in_gm = nn.Linear(in_features=6, out_features=6)
+            self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
+
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']
         # self.lstm_cell = nn.LSTMCell(input_size=self.fea_dim,hidden_size=self.paras['unit'])
         ## TRY #OVERFIT TRAINING
@@ -137,9 +144,9 @@ class LSTM(nn.Module):
             gt_var).float()
 
         if self.data_path == './data/stocknet-dataset/price/preprocessed_rania' \
-                or './data/kdd17/preprocessed_rania' \
-                or '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
-                or '/workspace/ALSTM/data/kdd17/preprocessed_rania':
+                or self.data_path == './data/kdd17/preprocessed_rania' \
+                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania':
             # preprocess_rania - concatenation + in_lat
             original_features_mapping = self.in_rest(pv_var[:, :, 0:11])
             gm_feature_mapping = self.in_gm(pv_var[:, :, 11:17])

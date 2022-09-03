@@ -267,6 +267,7 @@ if __name__ == '__main__':
         'w')
     if args.zeus == 1:
         args.path = args.path.replace('.', '/workspace/ALSTM')
+        print('args.path= ', args.path)
         # args.path = '/workspace/ALSTM/data/stocknet-dataset/price/ourpped'
         args.model_path = args.model_path.replace('.', '/wokrspace/ALSTM')
         # args.model_path = '/workspace/ALSTM/saved_model/acl18_alstm/exp'

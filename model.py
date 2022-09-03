@@ -55,6 +55,7 @@ class LSTM(nn.Module):
                  att=0, hinge=0, fix_init=0, adv=0, reload=0, shuffle=0):
         super(LSTM, self).__init__()
         self.data_path = data_path
+        print('self.data_path= ', self.data_path)
         self.model_path = model_path
         self.model_save_path = model_save_path
         # model parameters
@@ -105,10 +106,10 @@ class LSTM(nn.Module):
         self.fea_dim = self.tra_pv.shape[2]
         print('self.fea_dim= ', self.fea_dim)
         print('self.tra_pv,shape= ', self.tra_pv.shape)
-        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania' \
-                or self.data_path == './data/kdd17/preprocessed_rania' \
-                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
-                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania':
+        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania_embeddings' \
+                or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
+                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings':
             self.in_pr = nn.Linear(in_features=6, out_features=6)
             self.in_gm = nn.Linear(in_features=6, out_features=6)
             self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
@@ -143,10 +144,10 @@ class LSTM(nn.Module):
         pv_var, wd_var, gt_var = torch.from_numpy(pv_var).float(), torch.from_numpy(wd_var).float(), torch.from_numpy(
             gt_var).float()
 
-        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania' \
-                or self.data_path == './data/kdd17/preprocessed_rania' \
-                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania' \
-                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania':
+        if self.data_path == './data/stocknet-dataset/price/preprocessed_rania_embeddings' \
+                or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
+                or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings':
             # preprocess_rania - concatenation + in_lat
             original_features_mapping = self.in_rest(pv_var[:, :, 0:11])
             gm_feature_mapping = self.in_gm(pv_var[:, :, 11:17])

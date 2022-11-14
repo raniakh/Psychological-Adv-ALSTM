@@ -282,6 +282,10 @@ if __name__ == '__main__':
         tra_date = '2007-01-03'
         val_date = '2015-01-02'
         tes_date = '2016-01-04'
+    elif 'synthetic' in args.path:
+        tra_date = '16/09/2019'
+        val_date = '30/12/2021'
+        tes_date = '01/04/2022'
     else:
         print('unexpected path: %s' % args.path)
         exit(0)

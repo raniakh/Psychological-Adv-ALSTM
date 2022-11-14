@@ -91,17 +91,23 @@ class LSTM(nn.Module):
         self.tra_date = tra_date
         self.val_date = val_date
         self.tes_date = tes_date
+        if 'synthetic' in data_path:
+            date_format = '%d/%m/%Y'
+        else:
+            date_format = '%Y-%m-%d'
         if shuffle == 0:
             self.tra_pv, self.tra_wd, self.tra_gt, \
             self.val_pv, self.val_wd, self.val_gt, \
             self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data(
                 self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
+                , date_format=date_format
             )
         else:
             self.tra_pv, self.tra_wd, self.tra_gt, \
             self.val_pv, self.val_wd, self.val_gt, \
             self.tes_pv, self.tes_wd, self.tes_gt = load_cla_data_shuffle(
                 self.data_path, tra_date, val_date, tes_date, seq=self.paras['seq'], hinge=hinge
+                , date_format=date_format
             )
         self.fea_dim = self.tra_pv.shape[2]
         print('self.fea_dim= ', self.fea_dim)
@@ -109,7 +115,9 @@ class LSTM(nn.Module):
         if self.data_path == './data/stocknet-dataset/price/preprocessed_rania_embeddings' \
                 or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
-                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings':
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings'\
+                or self.data_path == './data/synthetic/preprocessed'\
+                or self.data_path == '/workspace/ALSTM/data/synthetic/preprocessed':
             self.in_pr = nn.Linear(in_features=6, out_features=6)
             self.in_gm = nn.Linear(in_features=6, out_features=6)
             self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
@@ -147,7 +155,9 @@ class LSTM(nn.Module):
         if self.data_path == './data/stocknet-dataset/price/preprocessed_rania_embeddings' \
                 or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
-                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings':
+                or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings' \
+                or self.data_path == './data/synthetic/preprocessed' \
+                or self.data_path == '/workspace/ALSTM/data/synthetic/preprocessed':
             # preprocess_rania - concatenation + in_lat
             original_features_mapping = self.in_rest(pv_var[:, :, 0:11])
             gm_feature_mapping = self.in_gm(pv_var[:, :, 11:17])

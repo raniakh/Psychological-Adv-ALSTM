@@ -133,6 +133,8 @@ def train(model, optimizer, tune_para=False):
         if i > 100:
             validation_loss.append(model.loss.item())
             validation_accuracy.append(cur_valid_perf['acc'])
+        elif i > 50:
+            validation_accuracy.append(cur_valid_perf['acc'])
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
         print('---->>>>> Testing')
         # print('--> TESTING', file=f)
@@ -169,6 +171,8 @@ def train(model, optimizer, tune_para=False):
     print('\tBest Test performance:', best_test_perf, file=f)
     visual_loss(training_loss, validation_loss)
     visual_accuracy(training_accuracy, validation_accuracy, testing_accuracy)
+    print('training accuracy\n')
+    print(training_accuracy)
     return best_valid_perf, best_test_perf
 
 
@@ -327,6 +331,8 @@ if __name__ == '__main__':
             log_dict["Best Test mcc run index {}".format(i)] = best_test_perf['mcc']
 
     tmp_dict = return_log_dict()
+    print('dictionary: \n')
+    print(tmp_dict)
     # seed = 110
     # torch.manual_seed(seed)
     # print('seed = {}'.format(seed), file=f)

@@ -116,8 +116,8 @@ class LSTM(nn.Module):
                 or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings'\
-                or self.data_path == './data/synthetic/preprocessed'\
-                or self.data_path == '/workspace/ALSTM/data/synthetic/preprocessed':
+                or self.data_path == './data/synthetic/embeddings'\
+                or self.data_path == '/workspace/ALSTM/data/synthetic/embeddings':
             self.in_pr = nn.Linear(in_features=6, out_features=6)
             self.in_gm = nn.Linear(in_features=6, out_features=6)
             self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
@@ -156,8 +156,8 @@ class LSTM(nn.Module):
                 or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/kdd17/preprocessed_rania_embeddings' \
-                or self.data_path == './data/synthetic/preprocessed' \
-                or self.data_path == '/workspace/ALSTM/data/synthetic/preprocessed':
+                or self.data_path == './data/synthetic/embeddings' \
+                or self.data_path == '/workspace/ALSTM/data/synthetic/embeddings':
             # preprocess_rania - concatenation + in_lat
             original_features_mapping = self.in_rest(pv_var[:, :, 0:11])
             gm_feature_mapping = self.in_gm(pv_var[:, :, 11:17])

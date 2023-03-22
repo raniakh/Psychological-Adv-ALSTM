@@ -1,8 +1,6 @@
 from datetime import datetime
 import numpy as np
 import os
-import torch
-import random
 
 
 def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
@@ -13,14 +11,12 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
 
     data_EOD = []
     for index, fname in enumerate(fnames):
-        # print(fname)
         single_EOD = np.genfromtxt(
             os.path.join(data_path, fname), dtype=float, delimiter=',',
             skip_header=False
         )
-        # print('data shape:', single_EOD.shape)
         data_EOD.append(single_EOD)  # list of arrays, array = file
-    fea_dim = data_EOD[0].shape[1] - 2  # number of columns - 2,  why -2?
+    fea_dim = data_EOD[0].shape[1] - 2  # number of columns - 2
 
     trading_dates = np.genfromtxt(
         os.path.join(data_path, '..', 'trading_dates.csv'), dtype=str,
@@ -101,7 +97,7 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
                 tra_wd[ins_ind] = data_wd[date_ind - seq: date_ind,
                                   :]  # the corresponding week days for the N day history
                 tra_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][
-                                          -2] + 1) / 2  # Rania: (data_EOD[stock][date][next to last column]+1)/2 -> what is this value? classification 1 or 0
+                                          -2] + 1) / 2  #   (data_EOD[stock][date][next to last column]+1)/2 -> classification 1 or 0
                 ins_ind += 1
 
     # validation
@@ -116,7 +112,7 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
         for tic_ind in range(len(fnames)):
             if abs(data_EOD[tic_ind][date_ind][-2]) > 1e-8 and \
                     data_EOD[tic_ind][date_ind - seq: date_ind, :].min() > -123320:
-                val_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, :-2]  # was :-2
+                val_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, :-2]
                 val_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]
                 val_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2
                 ins_ind += 1
@@ -133,8 +129,8 @@ def load_cla_data(data_path, tra_date, val_date, tes_date, seq=2, hinge=1,
         for tic_ind in range(len(fnames)):
             if abs(data_EOD[tic_ind][date_ind][-2]) > 1e-8 and \
                     data_EOD[tic_ind][date_ind - seq: date_ind, :].min() > -123320:
-                tes_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, :-2]  # was :-2
-                # # for the momentum indicator
+                tes_pv[ins_ind] = data_EOD[tic_ind][date_ind - seq: date_ind, :-2]
+                # for the momentum indicator
                 # tes_pv[ins_ind, -1, -1] = data_EOD[tic_ind][date_ind - 1, -1] - data_EOD[tic_ind][date_ind - 11, -1]
                 tes_wd[ins_ind] = data_wd[date_ind - seq: date_ind, :]
                 tes_gt[ins_ind, 0] = (data_EOD[tic_ind][date_ind][-2] + 1) / 2
@@ -156,14 +152,12 @@ def load_cla_data_shuffle(data_path, tra_date, val_date, tes_date, seq=2, hinge=
 
     data_EOD = []
     for index, fname in enumerate(fnames):
-        # print(fname)
         single_EOD = np.genfromtxt(
             os.path.join(data_path, fname), dtype=float, delimiter=',',
             skip_header=False
         )
-        # print('data shape:', single_EOD.shape)
         data_EOD.append(single_EOD)  # list of arrays, array = file
-    fea_dim = data_EOD[0].shape[1] - 2  # number of columns - 2,  why -2?
+    fea_dim = data_EOD[0].shape[1] - 2  # number of columns - 2
 
     trading_dates = np.genfromtxt(
         os.path.join(data_path, '..', 'trading_dates.csv'), dtype=str,
@@ -180,7 +174,6 @@ def load_cla_data_shuffle(data_path, tra_date, val_date, tes_date, seq=2, hinge=
     wd_encodings = np.identity(5, dtype=float)  # I_5x5
     for index, date in enumerate(trading_dates):
         dates_index[date] = index
-        # indices_weekday[index] = datetime.strptime(date, date_format).weekday()
         data_wd[index] = wd_encodings[datetime.strptime(date, date_format).weekday()]
 
     tra_ind = dates_index[tra_date]

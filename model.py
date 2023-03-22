@@ -1,40 +1,25 @@
-import argparse
 import copy
-import numpy as np
 import os
 import random
-import sys
-from sklearn.utils import shuffle
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
 
 from load import load_cla_data, load_cla_data_shuffle
-from evaluator import evaluate
-# from lossImpl import hingeloss
-from sklearn.metrics import hinge_loss
 
-
-# helpers: tf.losses.hinge_loss -> F.hinge_embedding_loss
-#          tf.losses.log_loss -> F.binary_cross_entropy
 
 class Attention(nn.Module):
     def __init__(self, num_units):
         super(Attention, self).__init__()
         self.av_W = nn.Linear(in_features=num_units, out_features=num_units, bias=True)
-        # self.av_u = nn.Linear(in_features=num_units, out_features=1, bias=False)
-        self.av_u = nn.Parameter(data=torch.empty(num_units), requires_grad=True)  # before data=torch.zeros(4)
-        # self.att_weights = nn.Parameter(data=torch.FloatTensor(), requires_grad=True)
+        self.av_u = nn.Parameter(data=torch.empty(num_units), requires_grad=True)
         nn.init.uniform_(self.av_u)
-        # for weight in self.att_weights:
-        #     nn.init.xavier_uniform(tensor=weight)
         self.av_W.apply(initialize_weights)
 
     def forward(self, hidden_states):
         a_linear = self.av_W(hidden_states)
         a_laten = torch.tanh(a_linear)
-        a_scores = torch.tensordot(a_laten, self.av_u, dims=1)  # shape=(None,5)?
+        a_scores = torch.tensordot(a_laten, self.av_u, dims=1)
         a_alphas = F.softmax(a_scores, dim=-1)
         a_con = torch.sum(hidden_states * torch.unsqueeze(a_alphas, -1), dim=1)
         self.fea_con = torch.cat((hidden_states[:, -1, :], a_con),
@@ -110,8 +95,6 @@ class LSTM(nn.Module):
                 , date_format=date_format
             )
         self.fea_dim = self.tra_pv.shape[2]
-        print('self.fea_dim= ', self.fea_dim)
-        print('self.tra_pv,shape= ', self.tra_pv.shape)
         if self.data_path == './data/stocknet-dataset/price/preprocessed_rania_embeddings' \
                 or self.data_path == './data/kdd17/preprocessed_rania_embeddings' \
                 or self.data_path == '/workspace/ALSTM/data/stocknet-dataset/price/preprocessed_rania_embeddings' \
@@ -123,11 +106,7 @@ class LSTM(nn.Module):
             self.in_rest = nn.Linear(in_features=self.fea_dim-12, out_features=self.fea_dim-12)
 
         self.in_lat = nn.Linear(in_features=self.fea_dim, out_features=self.fea_dim)  # out_features=self.paras['seq']
-        # self.lstm_cell = nn.LSTMCell(input_size=self.fea_dim,hidden_size=self.paras['unit'])
-        ## TRY #OVERFIT TRAINING
-        # self.in_lat_2 = nn.Linear(in_features=self.fea_dim+10, out_features=self.fea_dim+2)
-        ##
-        self.outputs_lstm = nn.LSTM(input_size=self.fea_dim,  # (+2) TRY #OVERFIT TRAINING
+        self.outputs_lstm = nn.LSTM(input_size=self.fea_dim,
                                     hidden_size=self.paras['unit'], batch_first=True)  # input_size=self.paras['seq']
         if self.att:
             self.attn_layer = Attention(num_units=self.paras['unit'])
@@ -167,12 +146,12 @@ class LSTM(nn.Module):
         else:
             # original code
             feature_mapping_tmp = self.in_lat(pv_var)
-        feature_mapping = torch.tanh(feature_mapping_tmp)  # Added 08.03.22
+        feature_mapping = torch.tanh(feature_mapping_tmp)
         outputs, final_states = self.outputs_lstm(feature_mapping)
         if self.att:
             self.fea_con = self.attn_layer(outputs)
             if self.adv_train:
-                self.pred, self.adv_pred = self.adv_layer(self.fea_con, gt_var) # TODO: - the two outputs are the same up to a constant, is this ok?
+                self.pred, self.adv_pred = self.adv_layer(self.fea_con, gt_var)
             else:
                 self.pred = self.linear_no_adv(self.fea_con)
         else:
@@ -212,7 +191,7 @@ class Adversarial(nn.Module):
         adv_input.retain_grad()
         pred_loss.backward(retain_graph=True)
         grad = adv_input.grad.detach()
-        grad = F.normalize(grad, dim=1)  # maybe 0?
+        grad = F.normalize(grad, dim=1)
         self.adv_pv_var = adv_input + self.eps * grad
         self.adv_pred = self.get_pred(self.adv_pv_var)
         if self.hinge:

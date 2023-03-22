@@ -1,6 +1,4 @@
-import math
 import numpy as np
-import scipy.stats as sps
 import torch
 from sklearn.metrics import accuracy_score, matthews_corrcoef, mean_squared_error
 

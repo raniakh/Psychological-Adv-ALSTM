@@ -3,18 +3,13 @@ import copy
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import pickle
-import random
 import sys
 from sklearn.utils import shuffle
 from time import time
 import datetime
 import torch
-import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 
-from load import load_cla_data
 from evaluator import evaluate
 from model import LSTM, initialize_weights
 
@@ -44,43 +39,32 @@ def train(model, optimizer, tune_para=False):
     if not (model.tra_pv.shape[0] % model.batch_size == 0):
         bat_count += 1
     for i in range(model.epochs):
-        # print('--> EPOCH {}:'.format(i), file=f)
+        print('--> EPOCH {}:'.format(i), file=f)
         t1 = time()
         tra_loss = 0.0
         tra_obj = 0.0
         l2 = 0.0
         tra_adv = 0.0
-        ## trying something
         tra_acc = 0.0
-        ##
         for j in range(bat_count):
             optimizer.zero_grad()
-            # print('--> BATCH {}:'.format(j), file=f)
-            # print('--> TRAINING', file=f)
+            print('--> BATCH {}:'.format(j), file=f)
+            print('--> TRAINING', file=f)
             pv_b, wd_b, gt_b = model.get_batch(j * model.batch_size)
             pred, adv_pred = model(pv_b, wd_b, gt_b, f)
-            ## trying something
             if model.adv_train:
                 cur_tra_perf = evaluate(adv_pred, gt_b, model.hinge)
-                print('*--* TRAINING evaluate: ', evaluate(adv_pred, gt_b, model.hinge))  # DEBUG purposes
                 tra_vars = [model.adv_layer.fc_W.weight, model.adv_layer.fc_W.bias]
-                torch.set_printoptions(profile="full")
-                # print("--> PREDICTION TRAINING - [adv_pred, true label] - epoch {} batch {}".format(i, j), file=f)
-                tmp_arr = np.concatenate((adv_pred.data.numpy(), gt_b), axis=1)
-                # print(tmp_arr, file=f)
-                torch.set_printoptions(profile="default")
                 with torch.no_grad():
                     for var in tra_vars:
                         l2 += torch.sum(var ** 2) / 2
             else:
                 cur_tra_perf = evaluate(pred, gt_b, model.hinge)
-                print('*--* TRAINING evaluate: ', cur_tra_perf)
             tra_acc += cur_tra_perf['acc']
-            ##
 
             loss = model.loss + parameters['bet'] * model.adv_layer.adv_loss + parameters[
-                'alp'] * l2  # TODO: - the l2 loss is MUCH bigger than the other 2 losses, which makes it dominant. Other losses have 0 effect.
-            loss.backward(retain_graph=True)  # TODO: - Not sure you want the retain_graph = true.
+                'alp'] * l2
+            loss.backward(retain_graph=True)
             optimizer.step()
             tra_loss += model.loss
             tra_obj += loss.data
@@ -88,9 +72,8 @@ def train(model, optimizer, tune_para=False):
         epoch_loss = (tra_obj / bat_count).item()
         epoch_accuracy = (tra_acc / bat_count).item()
         # scheduler.step(epoch_loss)
-        if i > 100:
-            training_loss.append(epoch_loss)
-            training_accuracy.append(epoch_accuracy)
+        training_loss.append(epoch_loss)
+        training_accuracy.append(epoch_accuracy)
         print('----->>>>> Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
               (l2 / bat_count), (tra_adv / bat_count))
         if not tune_para:
@@ -117,39 +100,20 @@ def train(model, optimizer, tune_para=False):
             print('Training:', (tra_obj / bat_count).item(), (tra_loss / bat_count).item(),
                   (l2 / bat_count), '\tTrain per:', (tra_acc / bat_count).item())
         # test on validation
-        print('---->>>>> Validation')
-        # print('--> VALIDATION', file=f)
         val_pred, val_adv_pred = model(model.val_pv, model.val_wd, model.val_gt, f)
-        # torch.set_printoptions(profile="full")
-        # print("--> PREDICTION VALIDATION - adv_pred - epoch {}".format(i), file=f)
-        # torch.set_printoptions(profile="full")
-        # tmp_arr = np.concatenate((val_adv_pred.data.numpy(), model.val_gt), axis=1)
-        # print(tmp_arr, file=f)
-        # torch.set_printoptions(profile="default")
         if model.adv_train:
             cur_valid_perf = evaluate(val_adv_pred, model.val_gt, model.hinge)
         else:
             cur_valid_perf = evaluate(val_pred, model.val_gt, model.hinge)
-        if i > 100:
-            validation_loss.append(model.loss.item())
-            validation_accuracy.append(cur_valid_perf['acc'])
-        elif i > 50:
-            validation_accuracy.append(cur_valid_perf['acc'])
+        validation_loss.append(model.loss.item())
+        validation_accuracy.append(cur_valid_perf['acc'])
         print('\tVal per:', cur_valid_perf, '\tVal loss:', model.loss.item())
-        print('---->>>>> Testing')
-        # print('--> TESTING', file=f)
         test_pred, test_adv_pred = model(model.tes_pv, model.tes_wd, model.tes_gt, f)
-        # print("--> PREDICTION TESTING - adv_pred - epoch {} batch {}".format(i, j), file=f)
-        # torch.set_printoptions(profile="full")
-        # tmp_arr = np.concatenate((test_adv_pred.data.numpy(), model.tes_gt), axis=1)
-        # print(tmp_arr, file=f)
-        # torch.set_printoptions(profile="default")
         if model.adv_train:
             cur_test_perf = evaluate(test_adv_pred, model.tes_gt, model.hinge)
         else:
             cur_test_perf = evaluate(test_pred, model.tes_gt, model.hinge)
-        if i > 100:
-            testing_accuracy.append(cur_test_perf['acc'])
+        testing_accuracy.append(cur_test_perf['acc'])
         print('\tTest per:', cur_test_perf, '\tTest loss:', model.loss.item())
 
         if cur_valid_perf['acc'] > best_valid_perf['acc']:
@@ -181,7 +145,7 @@ def visual_loss(training_loss, validation_loss):
     plt.plot(validation_loss, label='validation loss')
     plt.legend()
     plt.title('Loss x Epochs learning rate {}'.format(parameters['lr']))
-    labels = np.arange(start=100, step=50, stop=350)
+    labels = np.arange(start=0, step=50, stop=350)
     plt.xticks(labels)
     plt.show()
 
@@ -192,7 +156,7 @@ def visual_accuracy(training_acc, validation_acc, testing_acc):
     plt.plot(testing_acc, label='testing acc')
     plt.legend()
     plt.title('Accuracy x Epochs learning rate {}'.format(parameters['lr']))
-    labels = np.arange(start=100, step=50, stop=350)
+    labels = np.arange(start=0, step=50, stop=350)
     plt.xlabel(labels)
     plt.show()
 
@@ -286,10 +250,14 @@ if __name__ == '__main__':
         tra_date = '2007-01-03'
         val_date = '2015-01-02'
         tes_date = '2016-01-04'
-    elif 'synthetic' in args.path:
+    elif 'synthetic_data_2' in args.path:
         tra_date = '16/09/2019'
         val_date = '30/12/2021'
         tes_date = '01/04/2022'
+    elif 'synthetic_data_1' in args.path:
+        tra_date = '9/12/2013'
+        val_date = '03/01/2022'
+        tes_date = '01/07/2022'
     else:
         print('unexpected path: %s' % args.path)
         exit(0)
@@ -306,7 +274,7 @@ if __name__ == '__main__':
     )
 
     pytorch_total_params = sum(p.numel() for p in lstm.parameters() if p.requires_grad)
-    print(pytorch_total_params)
+    print('total params= ', pytorch_total_params)
 
     if args.gpu:
         device = 'cuda'
@@ -317,12 +285,9 @@ if __name__ == '__main__':
     optimizer = optim.Adam(lstm.parameters(),
                            lr=parameters['lr'])
     # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, verbose=True)
-    for i in range(0, 3):
+    for i in range(0, 10):
         seed = i + args.seed
         torch.manual_seed(seed)
-        # for j in range(0, 3):
-        #     torch.manual_seed(seed)
-        #     print('run index = {} seed = {}'.format(j, seed), file=f)
         if args.action == 'train':
             best_valid_perf, best_test_perf = train(model=lstm, optimizer=optimizer)
             log_dict["Best Val acc run index {}".format(i)] = best_valid_perf['acc']
@@ -333,10 +298,5 @@ if __name__ == '__main__':
     tmp_dict = return_log_dict()
     print('dictionary: \n')
     print(tmp_dict)
-    # seed = 110
-    # torch.manual_seed(seed)
-    # print('seed = {}'.format(seed), file=f)
-    # if args.action == 'train':
-    #     best_valid_perf, best_test_perf = train(model=lstm, optimizer=optimizer)
 
     f.close()

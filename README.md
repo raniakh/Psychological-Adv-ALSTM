@@ -1,6 +1,6 @@
 # Psychological-Adv-ALSTM
 ## A project for my research thesis "Stock Movement Price Prediction with Behavioral Features"
-In partial Fulfillment of The Requirements for the Degree of Master of Science in Data Science
+In Partial Fulfillment of The Requirements for the Degree of Master of Science in Data Science
 Submitted to the Senate of the Technion - Israel Institute of Technology. 
 
 Advised by Dr. Ori Plonsky and Prof. Margarita Osadchy. 

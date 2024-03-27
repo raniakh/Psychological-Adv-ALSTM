@@ -3,3 +3,5 @@ checkInputsAtDifferentStages*
 checkInputsAtDifferentStages_debugging.txt
 #ignore pycache
 __pycache__/
+.idea/
+tmp/

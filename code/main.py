@@ -191,7 +191,7 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--gpu', type=int, default=0, help='use gpu')
     parser.add_argument('-q', '--model_path', help='path to load model', type=str,
                         default='./saved_model/acl18_alstm/exp')
-    parser.add_argument('-qs', '--model_save_path', type=str, help='path to save model', default='./tmp/model')
+    parser.add_argument('-qs', '--model_save_path', type=str, help='path to save model', default='../tmp/model')
     parser.add_argument('-o', '--action', type=str, help='train,test,pred', default='train')
     parser.add_argument('-m', '--model', type=str, help='pure_lstm, di_lstm, att_lstm, week_lstm, aw_lstm',
                         default='pure_lstm')

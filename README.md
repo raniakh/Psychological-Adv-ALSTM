@@ -1,13 +1,21 @@
-## Attentive LSTM with Adversarial Training for Stock Movement Prediction with Behavioral Features
+### Attentive LSTM with Adversarial Training for Stock Movement Prediction with Behavioral Features
 
-### A project for my research thesis "Stock Movement Price Prediction with Behavioral Features"
+#### A project for my research thesis "Stock Movement Price Prediction with Behavioral Features"
 
 * **TensorFlow to PyTorch Upgrade**: Upgraded the codebase from TensorFlow to PyTorch.
 * **Adversarial Advantage**: Inspired by Goodfellow et al. (2014), incorporated adversarial training to make the model more robust against real-world market noise. (https://arxiv.org/abs/1412.6572)
 * **Feature Engineering**: Engineered new features based on behavioral economics to capture investor psychology (regret & average return), enhancing prediction accuracy.
 * **Time Series**: The model is specifically designed for time series data, crucial for predicting future stock movements.
 
+#### Architecture 
 
+<img width="1050" alt="architecture" src="https://github.com/raniakh/Psychological-Adv-ALSTM/assets/11587508/ea132ee4-6969-4a25-8de0-6823f52ff293">
+
+#### Adversarial training
+
+<img width="811" alt="adversarial" src="https://github.com/raniakh/Psychological-Adv-ALSTM/assets/11587508/3aa80ab9-227e-484b-9e30-189321af2dde">
+
+<br /> <br />
 In Partial Fulfillment of The Requirements for the Degree of Master of Science in Data Science
 Submitted to the Senate of the Technion - Israel Institute of Technology. 
 

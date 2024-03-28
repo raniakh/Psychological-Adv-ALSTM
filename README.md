@@ -28,4 +28,5 @@ the following are $examples$ of run commands:
 * -p ../data/synthetic_data_2/preprocessed/ -l 15 -u 16 -l2 0.001 -v 1 -rl 0 -la 0.05 -le 0.001 -r 0.01 -seed 100 -shuffle 0.
 
 #### Note:
-* **Thesis PDF**:  The research thesis for this project, titled "Stock Movement Price Prediction with Behavioral Features",  is available at: https://drive.google.com/file/d/1AJlAgYA-08ARaHSrxnsXrJxyaRd3Xnk9/view?usp=sharing 
+* **Thesis PDF**:  The research thesis for this project, titled "Stock Movement Price Prediction with Behavioral Features",  is available at: https://drive.google.com/file/d/1AJlAgYA-08ARaHSrxnsXrJxyaRd3Xnk9/view?usp=sharing
+* **Based on**: F. Feng, H. Chen, X. He, J. Ding, M. Sun, T.S. Chua. “Enhancing Stock Movement Prediction with Adversarial Training”, arXiv:1810.09936v2, 2019

@@ -29,4 +29,3 @@ the following are $examples$ of run commands:
 
 #### Note:
 * **Thesis PDF**:  The research thesis for this project, titled "Stock Movement Price Prediction with Behavioral Features",  is available at: https://drive.google.com/file/d/1AJlAgYA-08ARaHSrxnsXrJxyaRd3Xnk9/view?usp=sharing
-* **Based on**: F. Feng, H. Chen, X. He, J. Ding, M. Sun, T.S. Chua. “Enhancing Stock Movement Prediction with Adversarial Training”, arXiv:1810.09936v2, 2019
